@@ -1,4 +1,5 @@
-#include "Hex.h"
+#include "../src/Hex.h"
+#include <ostream>
 #include <string>
 #include <unordered_map>
 
@@ -23,6 +24,10 @@ const std::unordered_map<char, float> english_char_freqs = {
     {'f', 0.0181}
 };
 
+std::string hex_to_64(hex hx){
+    return hexTo64(hx);
+}
+
 void single_byte_xor_cipher(hex hx){
     int len = hx.raw.length() / 2;    
     std::unordered_map<char, float> char_freqs;
@@ -32,6 +37,10 @@ void single_byte_xor_cipher(hex hx){
     }
 }
 
-int main(){
-    
+int main(int argc, char** argv){
+    std::string test(argv[1]);
+    if (test == "hex_to_64"){
+        if (argc != 3) std::cout << "expected 1 argument" << std::endl;
+        else std::cout << hex_to_64(hex{argv[2]}) << std::endl;
+    }
 }

@@ -17,7 +17,7 @@ hex hexor(std::string s1, std:: string s2);
 /**
  * Converts a hex string to base 64.
  */
-std::string hexTo64(std::string s);
+std::string hexTo64(hex hx);
 
 /**
  * Converts an unsigned integer to a hex string, zero-padded

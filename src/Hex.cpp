@@ -36,14 +36,14 @@ std::string hex::toString(){
     return ret;
 }
 
-std::string hexTo64(std::string s){
+std::string hexTo64(hex hx){
     std::string curr = "   ";
     std::string ret = "";
+    std::string s = hx.raw;
     for (int i = 1; i <= s.length(); i++){
         int j = s.length() - i;
         curr[j%3] = s[j];
         if (i%3 == 0 || j == 0){
-            std::cout << curr << std::endl;
             int val = intFromHexRaw(curr);
             curr = "   ";
             ret += B64[val & 63];
@@ -59,8 +59,8 @@ hex hexor(hex h1, hex h2){
     std::string s1 = h1.raw, s2 = h2.raw;
     int len = std::min(s1.length(), s2.length());
     for (int i = 0; i < len; i += 8){
-        int val1 = intFromHex(s1.substr(i, 8));
-        int val2 = intFromHex(s2.substr(i, 8));
+        int val1 = intFromHexRaw(s1.substr(i, 8));
+        int val2 = intFromHexRaw(s2.substr(i, 8));
         int val = val1 ^ val2;
         ret += intToHex(val, 8).raw;
     }
