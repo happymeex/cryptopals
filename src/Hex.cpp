@@ -1,4 +1,5 @@
 #include <cctype>
+#include "Hex.h" 
 #include <iostream>
 #include <algorithm>
 #include <iterator>
@@ -46,10 +47,5 @@ std::string fxor(std::string s1, std::string s2){
         ret += toHex(val, 8);
     }
     return ret;
-}
-
-int main(int argc, char** argv){
-    //std:: cout << hexTo64(argv[1]) << std::endl;
-    std::cout << fxor(argv[1], argv[2]) << std::endl;
 }
 
