@@ -1,8 +1,40 @@
+#ifndef _HEX_
+#define _HEX_
+
 #include <iostream>
-#include <string>
 
-std::string fxor(std::string s1, std:: string s2);
+struct hex {
+    std::string raw;
+    std::string toString();
+};
 
+/**
+ * Computes the bitwise or of two hex strings.
+ * Uses a truncation of one if necessary so that hex strings have equal length.
+ */
+hex hexor(std::string s1, std:: string s2);
+
+/**
+ * Converts a hex string to base 64.
+ */
 std::string hexTo64(std::string s);
 
-std::string toHex(long x, int length);
+/**
+ * Converts an unsigned integer to a hex string, zero-padded
+ * if necessary to a given length.
+ */
+hex intToHex(long x, int length);
+
+/**
+ * Converts a string represented an unsigned hex value to an integer.
+ */
+int intFromHexRaw(std::string s);
+
+/**
+ * Encodes a string to hex.
+ */
+hex toHex(std::string s);
+
+std::string fromHex(std::string s);
+
+#endif
