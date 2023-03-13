@@ -12,7 +12,7 @@ struct hex {
  * Computes the bitwise or of two hex strings.
  * Uses a truncation of one if necessary so that hex strings have equal length.
  */
-hex hexor(std::string s1, std:: string s2);
+hex hexor(hex hx1, hex hx2);
 
 /**
  * Converts a hex string to base 64.

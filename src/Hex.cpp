@@ -6,7 +6,7 @@ const std::string B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         "abcdefghijklmnopqrstuvwxyz"
                         "0123456789+/";
 
-hex intToHex(long x, int length){
+hex intToHex(int x, int length){
     std::stringstream ss;
     ss << std::hex << x;
     std::string ret = ss.str();
@@ -58,11 +58,11 @@ hex hexor(hex h1, hex h2){
     std::string ret = "";
     std::string s1 = h1.raw, s2 = h2.raw;
     int len = std::min(s1.length(), s2.length());
-    for (int i = 0; i < len; i += 8){
-        int val1 = intFromHexRaw(s1.substr(i, 8));
-        int val2 = intFromHexRaw(s2.substr(i, 8));
+    for (int i = 0; i < len; i += 7){
+        int val1 = intFromHexRaw(s1.substr(i, 7));
+        int val2 = intFromHexRaw(s2.substr(i, 7));
         int val = val1 ^ val2;
-        ret += intToHex(val, 8).raw;
+        ret += intToHex(val, std::min(7, len - i)).raw;
     }
     return hex{ret};
 }

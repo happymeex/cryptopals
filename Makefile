@@ -1,4 +1,4 @@
 set1: test/set1.cpp src/Hex.cpp
-	g++ $^ -o build/set1
+	g++ -std=c++20 $^ -o build/set1
 	
 
