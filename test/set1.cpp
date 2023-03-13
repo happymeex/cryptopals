@@ -84,12 +84,23 @@ std::tuple<hex, double, char> detect_single_byte_xor(const std::vector<hex> &v){
     return std::tuple<hex, double, char>{best, highestScore, bestKey};
 }
 
-hex repeated_key_xor(hex hx, hex key){
+/**
+ * Returns the repeating key xor encryption of a hex string by a hex key,
+ * assuming both are encodings of ASCII strings.
+ */
+hex repeating_key_xor(hex hx, hex key){
     if (!hx.isValidString() || !key.isValidString()) throw "these hex values do not represent strings";
     while (key.raw.length() < hx.raw.length()){
         key.raw += key.raw;
     }
     return hexor(hx, key);
+}
+
+/**
+ * Returns the repeating key xor encryption of a cipher string by a key string.
+ */
+hex repeating_key_xor(std::string cipher, std::string keyString){
+    return repeating_key_xor(toHex(cipher), toHex(keyString));
 }
 
 int main(int argc, char** argv){
@@ -130,9 +141,7 @@ int main(int argc, char** argv){
     else if (test == "repeating_key_xor"){
         if (argc != 4) std::cout << "expected 2 arguments" << std::endl;
         else{
-            hex hx = toHex(argv[2]);
-            hex key = toHex(argv[3]);
-            std::cout << repeated_key_xor(hx, key).raw << std::endl;
+            std::cout << repeating_key_xor(argv[2], argv[3]).raw << std::endl;
         }
     }
 }
