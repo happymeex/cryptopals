@@ -31,9 +31,22 @@ std::string hex::toString(){
     int length = this->raw.length();
     for (int i = 0; i < length; i += 2){
         int val = intFromHexRaw(this->raw.substr(i, 2));
+        if (val > 127 || val < 0){
+            throw "invalid string";
+        }
         ret += val;
     }
     return ret;
+}
+
+bool hex::isValidString(){
+    try{
+        this->toString();
+        return true;
+    }
+    catch(const char* msg){
+        return false;
+    }
 }
 
 std::string hexTo64(hex hx){

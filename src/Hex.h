@@ -6,6 +6,7 @@
 struct hex {
     std::string raw;
     std::string toString();
+    bool isValidString();
 };
 
 /**
