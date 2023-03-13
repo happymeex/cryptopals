@@ -72,10 +72,11 @@ hex hexor(hex h1, hex h2){
     std::string s1 = h1.raw, s2 = h2.raw;
     int len = std::min(s1.length(), s2.length());
     for (int i = 0; i < len; i += 7){
-        int val1 = intFromHexRaw(s1.substr(i, 7));
-        int val2 = intFromHexRaw(s2.substr(i, 7));
+        int sublen = std::min(7, len - i);
+        int val1 = intFromHexRaw(s1.substr(i, sublen));
+        int val2 = intFromHexRaw(s2.substr(i, sublen));
         int val = val1 ^ val2;
-        ret += intToHex(val, std::min(7, len - i)).raw;
+        ret += intToHex(val, sublen).raw;
     }
     return hex{ret};
 }

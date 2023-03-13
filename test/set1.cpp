@@ -92,6 +92,16 @@ std::tuple<hex, double, char> detect_single_byte_xor(const std::vector<hex> &v){
     return std::tuple<hex, double, char>{best, highestScore, bestKey};
 }
 
+hex repeated_key_xor(hex hx, hex key){
+    if (!hx.isValidString() || !key.isValidString()) throw "these hex values do not represent strings";
+    std::cout<<"valid"<<std::endl;
+    while (key.raw.length() < hx.raw.length()){
+        key.raw += key.raw;
+    }
+    std::cout<<"past while"<< hx.raw.length() << " " << key.raw.length() << std::endl;
+    return hexor(hx, key);
+}
+
 int main(int argc, char** argv){
     makeCharFreq();
     std::string test(argv[1]);
@@ -124,6 +134,16 @@ int main(int argc, char** argv){
             auto [decrypted, stringScore, key] = detect_single_byte_xor(v);
             std::cout << "key: " << key << std::endl << decrypted.toString() << std::endl;
             file.close();
+        }
+    }
+
+    else if (test == "repeating_key_xor"){
+        if (argc != 4) std::cout << "expected 2 arguments" << std::endl;
+        else{
+            hex hx = toHex(argv[2]);
+            hex key = toHex(argv[3]);
+            std::cout << "got: " << hx.toString() << " " << key.toString() << std::endl;
+            std::cout << repeated_key_xor(hx, key).raw << std::endl;
         }
     }
 }
