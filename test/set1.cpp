@@ -10,14 +10,6 @@
 
 double CHAR_DISTRIBUTION[128];
 
-std::string hex_to_64(hex hx){
-    return hexTo64(hx);
-}
-
-hex fixed_xor(hex hx1, hex hx2){
-    return hexor(hx1, hx2);
-}
-
 void makeCharFreq(){
     std::ifstream freq{"test/data/char_freqs.txt"};
     for (int i = 0; i < 128; i++){
@@ -94,11 +86,9 @@ std::tuple<hex, double, char> detect_single_byte_xor(const std::vector<hex> &v){
 
 hex repeated_key_xor(hex hx, hex key){
     if (!hx.isValidString() || !key.isValidString()) throw "these hex values do not represent strings";
-    std::cout<<"valid"<<std::endl;
     while (key.raw.length() < hx.raw.length()){
         key.raw += key.raw;
     }
-    std::cout<<"past while"<< hx.raw.length() << " " << key.raw.length() << std::endl;
     return hexor(hx, key);
 }
 
@@ -107,18 +97,18 @@ int main(int argc, char** argv){
     std::string test(argv[1]);
     if (test == "hex_to_64"){
         if (argc != 3) std::cout << "expected 1 argument" << std::endl;
-        else std::cout << hex_to_64(hex{argv[2]}) << std::endl;
+        else std::cout << hexTo64(hex{argv[2]}) << std::endl;
+    }
+
+    else if (test == "fixed_xor"){
+        if (argc != 4) std::cout << "expected 2 arguments" << std::endl;
+        else std::cout << hexor(hex{argv[2]}, hex{argv[3]}).raw << std::endl;
     }
 
     else if (test == "single_byte_xor_cipher"){
         if (argc != 3) std::cout << "expected 1 argument" << std::endl;
         auto [decrypted, stringScore, key] = single_byte_xor_cipher(hex{argv[2]});
         std::cout << "key: " << key << std::endl << decrypted.toString() << std::endl;
-    }
-
-    else if (test == "fixed_xor"){
-        if (argc != 4) std::cout << "expected 2 arguments" << std::endl;
-        else std::cout << hexor(hex{argv[2]}, hex{argv[3]}).raw << std::endl;
     }
 
     else if (test == "detect_single_byte_xor"){
@@ -142,7 +132,6 @@ int main(int argc, char** argv){
         else{
             hex hx = toHex(argv[2]);
             hex key = toHex(argv[3]);
-            std::cout << "got: " << hx.toString() << " " << key.toString() << std::endl;
             std::cout << repeated_key_xor(hx, key).raw << std::endl;
         }
     }
