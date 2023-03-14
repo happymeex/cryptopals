@@ -23,6 +23,38 @@ void makeCharFreq(){
     }
 }
 
+int hammingDistance(hex hx1, hex hx2){
+    if (hx1.raw.length() != hx2.raw.length()) 
+        throw "cannot compute hamming distance between strings of unequal length";
+    hex hx = hexor(hx1, hx2);
+    int len = hx.raw.length();
+    int numOnes = 0;
+    for (int i = 0 ; i < len; i++) {
+        int val = std::stoi(hx.raw.substr(i, 1), 0, 16);
+        while (val){
+            numOnes += val & 1;
+            val >>= 1;
+        }
+    }
+    return numOnes;
+}
+
+/**
+ * Computes the hamming distance between two strings (viewed
+ * as binary strings via ASCII).
+ *
+ * @returns hamming distance, or -1 if strings have different length
+ */
+int hammingDistance(std::string s1, std::string s2){
+    try{
+        return hammingDistance(toHex(s1), toHex(s2));
+    }
+    catch(const char* msg){
+        std::cout << msg << std::endl;
+        return -1;
+    } 
+}
+
 /**
  * Given a string of ASCII characters, computes the Bhattacharyya coefficient
  * between the character distribution of the string and the character distribution known to English.
@@ -157,6 +189,13 @@ int main(int argc, char** argv){
         if (argc != 4) std::cout << "expected 2 arguments" << std::endl;
         else{
             std::cout << repeating_key_xor(argv[2], argv[3]).raw << std::endl;
+        }
+    }
+
+    else if (test == "hamming"){
+        if (argc != 4) std::cout << "expected 2 arguments" << std::endl;
+        else{
+                std::cout << hammingDistance(argv[2], argv[3]) << std::endl;
         }
     }
 }
