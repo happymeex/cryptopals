@@ -10,6 +10,9 @@
 
 double CHAR_DISTRIBUTION[128];
 
+/**
+ * Helper function run once by main to load English character frequency data
+ */
 void makeCharFreq(){
     std::ifstream freq{"test/data/char_freqs.txt"};
     for (int i = 0; i < 128; i++){
@@ -44,7 +47,14 @@ double score(std::string s){
     return bc;
 }
 
-
+/**
+ * Set 1 challenge 3: given a hex string assumed to be an encryption of
+ * an English message using single-byte xor, returns the most likely decrypted hex.
+ *
+ * @returns a tuple consisting of the decrypted hex, its score (Bhattacharyya index)
+ *      as a metric of likelihood of English, and the character key used to generate
+ *      the encryption
+ */
 std::tuple<hex, double, char> single_byte_xor_cipher(hex hx){
     if (!hx.isValidString()) throw "this hex value represents no ASCII string";
     int len = hx.raw.length() / 2;
@@ -64,6 +74,10 @@ std::tuple<hex, double, char> single_byte_xor_cipher(hex hx){
     return std::tuple<hex, double, char>{best, highestScore, bestKey};
 }
 
+/**
+ * Set 1 challenge 4: given a vector of hex strings, determine the string
+ * most likely to be an English message encrypted with single-byte xor.
+ */
 std::tuple<hex, double, char> detect_single_byte_xor(const std::vector<hex> &v){
     double highestScore = 0;
     hex best;
@@ -78,6 +92,7 @@ std::tuple<hex, double, char> detect_single_byte_xor(const std::vector<hex> &v){
             }
         }
         catch (const char* msg){
+            //catch gibberish hex (i.e. not arising from ASCII text encryption)
             continue;
         }
     } 
