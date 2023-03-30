@@ -4,7 +4,8 @@
 
 TEST_CASE("intToHex", "[intToHex]"){
     CHECK(intToHex(0, 1).raw == "0");
-    CHECK(intToHex(0, 5).raw == "00000");
+    CHECK(intToHex(26, 5).raw == "0001a");
+    CHECK_THROWS(intToHex(124932, 3));
 }
 
 TEST_CASE("b64ToHex", "[b64ToHex]"){

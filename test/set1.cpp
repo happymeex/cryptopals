@@ -90,6 +90,7 @@ double score(std::string s){
  */
 std::tuple<hex, double, char> single_byte_xor_cipher(hex hx){
     if (!hx.isValidString()) throw "this hex value represents no ASCII string";
+    if (hx.raw == "") throw "single byte xor called on empty hex value";
     int len = hx.raw.length() / 2;
     double highestScore = 0;
     hex best;
@@ -152,17 +153,18 @@ hex repeating_key_xor(std::string cipher, std::string keyString){
 }
 
 hex break_repeating_xor(const hex hx){
+    //start by guessing the keysize: for each guessed size, 
     int upperBound = std::min(40, (int) hx.raw.length() / 4);
     std::vector<std::pair<int, double>> keySize {{2, 8}, {3, 8}};
-    const int numSamples = 3;
+    const int numSamples = 50;
     for (int guess = 2; guess < upperBound; guess++){
         std::vector<hex> samples;
-        for (int j = 0; j < numSamples; j++){
+        for (int j = 0; j < numSamples && 2*j*guess < hx.raw.length(); j++){
             samples.push_back(toHex(hx.raw.substr(2*j*guess, 2*guess)));
         }
         double totalHamming = 0;
-        for (int i = 0; i < numSamples; i++){
-            for (int j = i+1; j < numSamples; j++){
+        for (int i = 0; i < samples.size(); i++){
+            for (int j = i+1; j < samples.size(); j++){
                 totalHamming += hammingDistance(samples[i], samples[j]);
             }
         }
@@ -174,14 +176,15 @@ hex break_repeating_xor(const hex hx){
             }
         }
     }
-    std::cout << "keysize guess: " << keySize[0].first << " " << keySize[1].first << std::endl;
+
+    //std::cout << "keysize guess: " << keySize[0].first << " " << keySize[1].first << std::endl;
     std::vector<hex> ret;
     for (auto [size, _]: keySize){
         std::vector<hex> block;
         for (int i = 0; i < size; i++) block.push_back(hex{""});
         int len = hx.raw.length();
         for (int i = 0; i < len; i+=2){
-            block[i % size].raw += hx.raw.substr(i, 2);
+            block[(i/2) % size].raw += hx.raw.substr(i, 2);
         }
         std::string key = "";
         for (const auto &hxi: block){
@@ -190,7 +193,7 @@ hex break_repeating_xor(const hex hx){
         }
         ret.push_back(repeating_key_xor(hx, toHex(key)));
     }
-    std::cout << "Guesses: " << ret[0].toString() << std::endl << ret[1].toString() << std::endl;
+    //std::cout << "Guesses: " << ret[0].toString() << std::endl << ret[1].toString() << std::endl;
     return ret[0];
 }
 
@@ -253,5 +256,7 @@ int main(int argc, char** argv){
         for (std::string s; file >> s;){
             encrypted += s;
         }
+        hex decrypted = break_repeating_xor(b64ToHex(encrypted));
+        std::cout << decrypted.toString() << std::endl;
     }
 }
