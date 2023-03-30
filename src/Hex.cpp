@@ -1,10 +1,33 @@
 #include "Hex.h" 
 #include <algorithm>
+#include <cctype>
 #include <sstream>
 
 const std::string B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         "abcdefghijklmnopqrstuvwxyz"
                         "0123456789+/";
+
+int b64ToInt(char c){
+    if (std::isupper(c)) return c - 'A';
+    else if (std::islower(c)) return c - 'a' + 26;
+    else if (std::isdigit(c)) return c - '0' + 52;
+    else if (c == '+') return 62;
+    else if (c == '/') return 63;
+    throw "invalid base64";
+}
+
+/**
+ * Converts a base 64 string to an integer, assuming
+ * the true value fits into an integer.
+ */
+int b64ToInt(std::string s){
+    int ret = 0;
+    for (auto it = s.rbegin(); it < s.rend(); it++){
+        ret |= b64ToInt(*it);
+        ret <<= 6;
+    }
+    return ret;
+}
 
 hex intToHex(int x, int length){
     std::stringstream ss;
@@ -79,5 +102,13 @@ hex hexor(hex h1, hex h2){
         ret += intToHex(val, sublen).raw;
     }
     return hex{ret};
+}
+
+hex b64ToHex(std::string s){
+    hex ret = hex{""};
+    for (int i = 0; i < s.length(); i += 2){
+        ret.raw += intToHex(b64ToInt(s.substr(i, 2)), 3).raw;
+    }
+    return ret;
 }
 
