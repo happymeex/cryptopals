@@ -35,6 +35,7 @@ std::string hexTo64(hex hx);
 /**
  * Converts an unsigned integer to a hex string, zero-padded
  * if necessary to a given length.
+ * Throws error if `x` doesn't fit into a hex value of length `length`.
  */
 hex intToHex(int x, int length);
 
@@ -49,8 +50,9 @@ int intFromHexRaw(std::string s);
 hex toHex(std::string s);
 
 /**
- * Converts a base 64 string to a hex. Requires the input string
- * to have even length.
+ * Converts a base 64 string to a hex.
+ * Throws an error if input string is not  properly padded
+ * (so length should be divisible by 4).
  */
 hex b64ToHex(std::string s);
 

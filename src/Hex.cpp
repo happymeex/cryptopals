@@ -7,34 +7,17 @@ const std::string B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                         "abcdefghijklmnopqrstuvwxyz"
                         "0123456789+/";
 
-int b64ToInt(char c){
-    if (std::isupper(c)) return c - 'A';
-    else if (std::islower(c)) return c - 'a' + 26;
-    else if (std::isdigit(c)) return c - '0' + 52;
-    else if (c == '+') return 62;
-    else if (c == '/') return 63;
-    throw "invalid base64";
-}
-
-/**
- * Converts a base 64 string to an integer, assuming
- * the true value fits into an integer.
- */
-int b64ToInt(std::string s){
-    int ret = 0;
-    for (auto it = s.rbegin(); it < s.rend(); it++){
-        ret |= b64ToInt(*it);
-        ret <<= 6;
-    }
-    return ret;
-}
-
 hex intToHex(int x, int length){
     std::stringstream ss;
     ss << std::hex << x;
     std::string ret = ss.str();
-    std::string padding(length - ret.length(), '0');
-    return hex{padding + ret};
+    try{
+        std::string padding(length - ret.length(), '0');
+        return hex{padding + ret};
+    }
+    catch (...){
+        throw "input integer does not fit in hex of given length";
+    }
 }
 
 hex toHex(std::string s){
@@ -104,11 +87,46 @@ hex hexor(hex h1, hex h2){
     return hex{ret};
 }
 
-hex b64ToHex(std::string s){
-    hex ret = hex{""};
-    for (int i = 0; i < s.length(); i += 2){
-        ret.raw += intToHex(b64ToInt(s.substr(i, 2)), 3).raw;
+int b64ToInt(char c){
+    if (std::isupper(c)) return c - 'A';
+    else if (std::islower(c)) return c - 'a' + 26;
+    else if (std::isdigit(c)) return c - '0' + 52;
+    else if (c == '+') return 62;
+    else if (c == '/') return 63;
+    throw "invalid base64";
+}
+
+/**
+ * Converts a base 64 string to an integer, assuming
+ * the true value fits into an integer.
+ * Throws an error if input contains invalid base 64 character.
+ */
+int b64ToInt(std::string s){
+    int ret = 0;
+    for (auto it = s.begin(); it < s.end(); it++){
+        ret |= b64ToInt(*it);
+        ret <<= 6;
     }
+    ret >>= 6;
     return ret;
+}
+
+hex b64ToHex(std::string s){
+    int len = s.length();
+    if (len == 0) return hex{""};
+    if (len % 4 != 0) throw "Improperly formatted base 64";
+    std::string raw = "";
+    for (int i = 0; i < len - 4; i += 4){
+        raw += intToHex(b64ToInt(s.substr(i, 4)), 6).raw;
+    }
+    std::string last = s.substr(len - 4, 4);
+    if (last[2] == '=' && last[3] == '='){
+        raw += intToHex(b64ToInt(last.substr(0, 2)) >> 4, 2).raw;
+    }
+    else if (last[3] == '='){
+        raw += intToHex(b64ToInt(last.substr(0, 3)) >> 2, 4).raw;
+    }
+    else raw += intToHex(b64ToInt(last), 6).raw;
+    return hex{raw};
 }
 

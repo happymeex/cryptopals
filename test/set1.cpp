@@ -246,4 +246,12 @@ int main(int argc, char** argv){
                 std::cout << hammingDistance(argv[2], argv[3]) << std::endl;
         }
     }
+
+    else if (test == "break_repeating_key_xor"){
+        std::ifstream file{"test/data/s1c6.txt"};
+        std::string encrypted = "";
+        for (std::string s; file >> s;){
+            encrypted += s;
+        }
+    }
 }
