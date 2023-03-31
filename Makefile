@@ -12,3 +12,4 @@ build/hex.o: src/Hex.cpp
 	
 build/aes.o: src/aes.cpp
 	g++ -std=c++20 -c $^ -o $@
+

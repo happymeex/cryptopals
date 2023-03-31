@@ -1,3 +1,4 @@
+#include <array>
 #include <iostream>
 #include "aes.h"
 
@@ -77,15 +78,20 @@ int mul14[256] = {
     0xd7,0xd9,0xcb,0xc5,0xef,0xe1,0xf3,0xfd,0xa7,0xa9,0xbb,0xb5,0x9f,0x91,0x83,0x8d
 };
 
-std::vector<int> inverseMixColumns(std::vector<int> in){
-    std::vector<int> ret;
+block inverseMixColumns(block in){
+    block ret;
     for (int i = 0; i < in.size(); i++){
         int rem = i % 4;
         int val =  mul14[in.at(i)]
             ^mul9[in.at(i-1 + ((rem == 0) ? 4 : 0))]
             ^mul13[in.at(i-2 + ((rem <= 1) ? 4 : 0))]
             ^mul11[in.at(i-3 + ((rem <= 2) ? 4 : 0))];
-        ret.push_back(val);
+        ret[i] = val;
     }
+    return ret;
+}
+
+block shiftRows(block b){
+    block ret;
     return ret;
 }
