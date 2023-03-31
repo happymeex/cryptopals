@@ -7,6 +7,7 @@
 #include <string>
 #include <unordered_map>
 #include <cmath>
+#include "../src/aes.h"
 
 double CHAR_DISTRIBUTION[128];
 
@@ -258,5 +259,22 @@ int main(int argc, char** argv){
         }
         hex decrypted = break_repeating_xor(b64ToHex(encrypted));
         std::cout << decrypted.toString() << std::endl;
+    }
+
+    else if (test == "aes"){
+        try{
+            std::ifstream file{"test/data/s1c7.txt"};
+            std::string encrypted = "";
+            for (std::string s; file >> s;){
+                encrypted += s;
+            }
+            hex cipher = b64ToHex(encrypted);
+            hex ret = aes128_ecb_decrypt(cipher, "YELLOW SUBMARINE");
+            std::cout << ret.toString() << std::endl;
+        }
+        catch (const char* message){
+            std::cout << message << std::endl;
+        }
+
     }
 }

@@ -1,6 +1,13 @@
-#include <array>
-#include <iostream>
 #include "aes.h"
+#include "Hex.h"
+
+std::array<int, 4> lastFour(const block &b){
+    std::array<int, 4> ret;
+    for (int i = 0; i < 4; i++){
+        ret[i] = b[12 + i];
+    }
+    return ret;
+}
 
 int mul9[256] = {
     0x00,0x09,0x12,0x1b,0x24,0x2d,0x36,0x3f,0x48,0x41,0x5a,0x53,0x6c,0x65,0x7e,0x77,
@@ -117,7 +124,26 @@ int inv_sbox[256] = {
     187, 60, 131, 83, 153, 97, 23, 43, 4, 126, 186, 119, 214, 38, 225, 105, 20, 99, 85, 33, 12, 125
 };
 
-block inverseMixColumns(block b){
+int rcon[256] = {
+    0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a,
+    0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39,
+    0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a,
+    0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8,
+    0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef,
+    0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc,
+    0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b,
+    0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3,
+    0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94,
+    0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20,
+    0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35,
+    0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f,
+    0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d, 0x01, 0x02, 0x04,
+    0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 0x2f, 0x5e, 0xbc, 0x63,
+    0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 0x72, 0xe4, 0xd3, 0xbd,
+    0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a, 0x74, 0xe8, 0xcb, 0x8d
+};
+
+block inverseMixColumns(const block &b){
     block ret;
     for (int i = 0; i < 16; i++){
         int rem = i % 4;
@@ -130,7 +156,7 @@ block inverseMixColumns(block b){
     return ret;
 }
 
-block invSubBytes(block b){
+block invSubBytes(const block &b){
     block ret;
     for (int i = 0; i < 16; i++){
         ret[i] = inv_sbox[b[i]];
@@ -143,7 +169,7 @@ block invSubBytes(block b){
  * the input block by i to the left. Optionally, if dir is -1,
  * then shifts to the right.
  */
-block shiftRows(block b, int dir = 1){
+block shiftRows(const block &b, int dir = 1){
     block ret;
     for (int i = 0; i < 4; i++){
         for (int j = i; j < 16; j += 4){
@@ -151,4 +177,94 @@ block shiftRows(block b, int dir = 1){
         }
     }
     return ret;
+}
+
+std::array<int, 4> keyScheduleCore(const std::array<int, 4> &in, int iteration){
+    std::array<int, 4> ret;
+    //rotate left and apply s-box
+    for (int i = 0; i < 4; i++){
+        ret[i] = sbox[in[(i+1)%4]];
+    }
+    ret[0] ^= rcon[iteration];
+    return ret;
+}
+
+std::vector<block> keySchedule(block initialKey, int rounds){
+    std::vector<block> ret = {initialKey};
+    std::array<int, 4> currFour;
+    for (int i = 1; i <= rounds; i++){
+        block nextBlock;
+        const block &prevBlock = ret.back();
+        currFour = lastFour(prevBlock);
+        currFour = keyScheduleCore(currFour, i);
+        for (int j = 0; j < 4; j++){
+            nextBlock[j] = currFour[j] ^ prevBlock[j];
+        }
+        for (int j = 4; j < 16; j++){
+            nextBlock[j] = nextBlock[j-4] ^ prevBlock[j];
+        }
+
+        ret.push_back(nextBlock);
+    }
+    return ret;
+}
+
+void blockXor(block &b1, const block &b2){
+    for (int i = 0; i < 16; i++) b1[i] ^= b2[i];
+}
+
+/**
+ * Given a ciphered block `b` and a key, applies the inverse of a round
+ * and returns the resulting block.
+ * Optional parameter `mixColumns`
+ *
+ */
+block invRound(block b, const block &key, bool diffusion = true, bool mixColumns = true){
+    block ret = b;
+    blockXor(ret, key);
+    if (diffusion){
+        if (mixColumns) ret = inverseMixColumns(ret);
+        ret = shiftRows(ret, -1);
+        ret = invSubBytes(ret);
+    }
+    return ret;
+}
+
+std::vector<block> hexToBlocks(const hex &cipher){
+    int len = cipher.raw.length();
+    if (len % 32 != 0) throw "aes: improperly padded hex (num bytes should be multiple of 16)";
+    std::vector<block> ret;
+    int index = 0;
+    block b;
+    while (index < len){
+        for (int i = 0; i < 16; i++){
+            b[i] = intFromHexRaw(cipher.raw.substr(index + 2*i, 2));
+        }
+        ret.push_back(b);
+        index += 32;
+    }
+    return ret;
+}
+
+hex aes128_ecb_decrypt(const hex &cipher, const std::string &key){
+    if (key.length() != 16) throw "key should be 16 bytes";
+    block initialKey;
+    for (int i = 0; i < 16; i++) initialKey[i] = key[i];
+    std::vector<block> keys = keySchedule(initialKey, 10);
+    std::vector<block> blocks = hexToBlocks(cipher);
+    
+    for (int round = 10; round >= 0; round--){
+        for (int i = 0; i < blocks.size(); i++){
+            blocks[i] = invRound(blocks[i], keys[round], round != 0, round != 10);
+        }
+    }
+
+    std::string raw = "";
+    for (auto block: blocks){
+        for (int i: block){
+            raw += intToHex(i, 2).raw;
+        }
+    }
+
+    return hex{raw};
 }

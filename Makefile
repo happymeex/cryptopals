@@ -1,4 +1,4 @@
-set1: test/set1.cpp build/hex.o
+set1: test/set1.cpp build/hex.o build/aes.o
 	g++ -std=c++20 $^ -o build/set1
 
 test: test/aes_t.cpp build/aes.o build/hex.o build/test.o
