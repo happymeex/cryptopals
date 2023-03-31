@@ -91,7 +91,17 @@ block inverseMixColumns(block in){
     return ret;
 }
 
-block shiftRows(block b){
+/**
+ * Returns the block obtained by cyclically shifting the ith row of
+ * the input block by i to the left. Optionally, if dir is -1,
+ * then shifts to the right.
+ */
+block shiftRows(block b, int dir = 1){
     block ret;
+    for (int i = 0; i < 4; i++){
+        for (int j = i; j < 16; j += 4){
+            ret[j] = b[(16 + j + 4*i*dir) % 16];
+        }
+    }
     return ret;
 }
