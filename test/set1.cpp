@@ -6,6 +6,7 @@
 #include <numbers>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <cmath>
 #include "../src/aes.h"
 
@@ -198,6 +199,24 @@ hex break_repeating_xor(const hex hx){
     return ret[0];
 }
 
+std::vector<hex> detect_aes_ecb(const std::vector<hex> &in){
+    std::vector<hex> ret;
+    for (hex hx: in){
+        int len = hx.raw.length();
+        if (len % 32 != 0) throw "improperly padded hex value";
+        std::unordered_set<std::string> blocks;
+        for (int i = 0; i < len; i += 32) {
+            std::string block = hx.raw.substr(i, 32);
+            if (blocks.contains(block)){
+                ret.push_back(hx);
+                break;
+            }
+            blocks.insert(block);
+        }
+    }
+    return ret;
+}
+
 int main(int argc, char** argv){
     makeCharFreq();
     if (argc < 2){
@@ -276,5 +295,22 @@ int main(int argc, char** argv){
             std::cout << message << std::endl;
         }
 
+    }
+
+    else if (test == "detect_aes"){
+        try{
+            std::ifstream file{"test/data/s1c8.txt"};
+            std::vector<hex> in;
+            for (std::string s; file >> s;){
+                in.push_back(hex{s});
+            }
+            std::vector<hex> out = detect_aes_ecb(in);
+            for (const auto &hx: out){
+                std::cout << hx.raw << std::endl;
+            }
+        }
+        catch (const char* message){
+            std::cout << message << std::endl;
+        }
     }
 }
