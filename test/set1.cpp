@@ -148,12 +148,16 @@ hex repeating_key_xor(hex hx, hex key){
 }
 
 /**
- * Returns the repeating key xor encryption of a cipher string by a key string.
+ * Set 1 challenge 5: Returns the repeating key xor encryption of a cipher string by a key string.
  */
 hex repeating_key_xor(std::string cipher, std::string keyString){
     return repeating_key_xor(toHex(cipher), toHex(keyString));
 }
 
+/**
+ * Set 1 challenge 6: Given a hex value assumed to be a cipher encrypted using repeating key xor,
+ * returns a hex value that is likely to be the decrypted text.
+ */
 hex break_repeating_xor(const hex hx){
     //start by guessing the keysize: for each guessed size, 
     int upperBound = std::min(40, (int) hx.raw.length() / 4);
@@ -199,6 +203,11 @@ hex break_repeating_xor(const hex hx){
     return ret[0];
 }
 
+/**
+ * Given a vector of hex values, returns the vector consisting of those
+ * that contain some duplicate block of 16 bytes (32 chars in the raw string).
+ * Throws an error if any of the hex values has byte length not divisible by 16.
+ */
 std::vector<hex> detect_aes_ecb(const std::vector<hex> &in){
     std::vector<hex> ret;
     for (hex hx: in){
