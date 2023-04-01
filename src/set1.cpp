@@ -1,155 +1,264 @@
+#include "set1.hpp"
+#include "aes.hpp"
+#include "hex.hpp"
+#include "utils.hpp"
+#include <algorithm>
+#include <cctype>
+#include <cmath>
+#include <fstream>
 #include <math.h>
+#include <numbers>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
-double CHAR_DISTRIBUTION[128] = {0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0.019578060965172565,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0.167564443682168,
-                                 0,
-                                 0.0015754276887500987,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0.0015078622753204398,
-                                 0.0003307916441739124,
-                                 0.0003314254660634964,
-                                 0,
-                                 0,
-                                 0.008634492219614468,
-                                 0.002076717421222119,
-                                 0.011055184780313847,
-                                 0.000519607185080999,
-                                 0.005918945715880591,
-                                 0.004937789430804492,
-                                 0.002756237869045172,
-                                 0.0021865587546870337,
-                                 0.0018385271551164353,
-                                 0.0025269211093936652,
-                                 0.0019199098857390264,
-                                 0.0018243295447897528,
-                                 0.002552781042488694,
-                                 0.002442242504945237,
-                                 0.00012036277683200988,
-                                 0,
-                                 0.00044107665296153596,
-                                 0,
-                                 0.0004404428310719519,
-                                 0,
-                                 0,
-                                 0.0024774830020061096,
-                                 0.0017387002075069484,
-                                 0.002987392712176473,
-                                 0.0010927723198318497,
-                                 0.0012938206232079082,
-                                 0.001220297284016159,
-                                 0.0009310209736100016,
-                                 0.0008752446473266058,
-                                 0.0020910417959267183,
-                                 0.0008814561018445294,
-                                 0.0003808001912620934,
-                                 0.0010044809306127922,
-                                 0.0018134911904778657,
-                                 0.0012758834637326799,
-                                 0.0008210528757671701,
-                                 0.00138908405321239,
-                                 0.00010001709417636208,
-                                 0.0011037374385216535,
-                                 0.0030896915651553373,
-                                 0.0030701064687671904,
-                                 0.0010426370083657518,
-                                 0.0002556203680692448,
-                                 0.0008048270353938186,
-                                 0,
-                                 0.00025194420110965734,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0.0612553996079051,
-                                 0.01034644514338097,
-                                 0.02500268898936656,
-                                 0.03188948073064199,
-                                 0.08610229517681191,
-                                 0.015750347191785568,
-                                 0.012804659959943725,
-                                 0.02619237267611581,
-                                 0.05480626188138746,
-                                 0.000617596049210692,
-                                 0.004945712204424292,
-                                 0.03218192615049607,
-                                 0.018140172626462205,
-                                 0.05503703643138501,
-                                 0.0541904405334676,
-                                 0.017362092874808832,
-                                 0.00100853739070613,
-                                 0.051525029341199825,
-                                 0.0518864979648296,
-                                 0.0632964962389326,
-                                 0.019247776378510318,
-                                 0.007819143740853554,
-                                 0.009565830104169261,
-                                 0.0023064144740073764,
-                                 0.010893686962847832,
-                                 0.0005762708620098124,
-                                 0,
-                                 0,
-                                 0,
-                                 0,
-                                 0};
+// double CHAR_DISTRIBUTION[128];
 
 /**
- * Given a string of ASCII characters, computes the Bhattacharyya coefficient
- * between the character distribution of the string and the character
- * distribution known to English.
- *
- * @returns the Bhattacharyya coefficient. Larger indicates more likely to be
- * English. Always between 0 and 1.
+ * Helper function run once by main to load English character frequency data
  */
-double score(std::string s) {
-    int len = s.length();
-    double freqs[128]{0};
-    for (auto c : s) {
-        if (c > 127) {
+// void makeCharFreq() {
+//     std::ifstream freq{"test/data/char_freqs.txt"};
+//     for (int i = 0; i < 128; i++) {
+//         int c;
+//         freq >> c;
+//         char colon;
+//         freq >> colon;
+//         double frequency;
+//         freq >> frequency;
+//         CHAR_DISTRIBUTION[c] = frequency;
+//     }
+// }
+
+std::tuple<hex, double, char> single_byte_xor_cipher(hex hx) {
+    if (!hx.isValidString())
+        throw "this hex value represents no ASCII string";
+    if (hx.raw == "")
+        throw "single byte xor called on empty hex value";
+    int len = hx.raw.length() / 2;
+    double highestScore = 0;
+    hex best;
+    int bestKey = -1;
+    for (int i = 0; i < 128; i++) {
+        hex key = toHex(std::string(len, i));
+        hex decrypted = hexor(hx, key);
+        double stringScore = score(decrypted.toString());
+        if (stringScore > highestScore) {
+            best = decrypted;
+            highestScore = stringScore;
+            bestKey = i;
+        }
+    }
+    return std::tuple<hex, double, char>{best, highestScore, bestKey};
+}
+
+std::tuple<hex, double, char>
+detect_single_byte_xor(const std::vector<hex> &v) {
+    double highestScore = 0;
+    hex best;
+    int bestKey = -1;
+    for (hex hx : v) {
+        try {
+            auto [decrypted, stringScore, key] = single_byte_xor_cipher(hx);
+            if (stringScore > highestScore) {
+                highestScore = stringScore;
+                best = decrypted;
+                bestKey = key;
+            }
+        } catch (const char *msg) {
+            // catch gibberish hex (i.e. not arising from ASCII text encryption)
             continue;
         }
-        freqs[c] += ((double)1) / len;
     }
-    double bc = 0;
-    for (int i = 0; i < 127; i++) {
-        bc += sqrt(CHAR_DISTRIBUTION[i] * freqs[i]);
-    }
-    return bc;
+    return std::tuple<hex, double, char>{best, highestScore, bestKey};
 }
+
+hex repeating_key_xor(hex hx, hex key) {
+    if (!hx.isValidString() || !key.isValidString())
+        throw "these hex values do not represent strings";
+    while (key.raw.length() < hx.raw.length()) {
+        key.raw += key.raw;
+    }
+    return hexor(hx, key);
+}
+
+hex repeating_key_xor(std::string cipher, std::string keyString) {
+    return repeating_key_xor(toHex(cipher), toHex(keyString));
+}
+
+hex break_repeating_xor(const hex hx) {
+    // start by guessing the keysize: for each guessed size,
+    int upperBound = std::min(40, (int)hx.raw.length() / 4);
+    std::vector<std::pair<int, double>> keySize{{2, 8}, {3, 8}};
+    const int numSamples = 50;
+    for (int guess = 2; guess < upperBound; guess++) {
+        std::vector<hex> samples;
+        for (int j = 0; j < numSamples && 2 * j * guess < hx.raw.length();
+             j++) {
+            samples.push_back(toHex(hx.raw.substr(2 * j * guess, 2 * guess)));
+        }
+        double totalHamming = 0;
+        for (int i = 0; i < samples.size(); i++) {
+            for (int j = i + 1; j < samples.size(); j++) {
+                totalHamming += hammingDistance(samples[i], samples[j]);
+            }
+        }
+        double avgHamming =
+            totalHamming / (guess * numSamples * (numSamples - 1) / 2.0);
+        for (int i = 0; i < keySize.size(); i++) {
+            if (avgHamming < keySize[i].second) {
+                keySize[i] = {guess, avgHamming};
+                break;
+            }
+        }
+    }
+
+    // std::cout << "keysize guess: " << keySize[0].first << " " <<
+    // keySize[1].first << std::endl;
+    std::vector<hex> ret;
+    for (auto [size, _] : keySize) {
+        std::vector<hex> block;
+        for (int i = 0; i < size; i++)
+            block.push_back(hex{""});
+        int len = hx.raw.length();
+        for (int i = 0; i < len; i += 2) {
+            block[(i / 2) % size].raw += hx.raw.substr(i, 2);
+        }
+        std::string key = "";
+        for (const auto &hxi : block) {
+            auto [_, __, blockKey] = single_byte_xor_cipher(hxi);
+            key += blockKey;
+        }
+        ret.push_back(repeating_key_xor(hx, toHex(key)));
+    }
+    // std::cout << "Guesses: " << ret[0].toString() << std::endl <<
+    // ret[1].toString() << std::endl;
+    return ret[0];
+}
+
+std::vector<hex> detect_aes_ecb(const std::vector<hex> &in) {
+    std::vector<hex> ret;
+    for (hex hx : in) {
+        int len = hx.raw.length();
+        if (len % 32 != 0)
+            throw "improperly padded hex value";
+        std::unordered_set<std::string> blocks;
+        for (int i = 0; i < len; i += 32) {
+            std::string block = hx.raw.substr(i, 32);
+            if (blocks.contains(block)) {
+                ret.push_back(hx);
+                break;
+            }
+            blocks.insert(block);
+        }
+    }
+    return ret;
+}
+
+// int main(int argc, char **argv) {
+//     makeCharFreq();
+//     if (argc < 2) {
+//         std::cout << "expected a test name" << std::endl;
+//         return 0;
+//     }
+//     std::string test(argv[1]);
+//     if (test == "hex_to_64") {
+//         if (argc != 3)
+//             std::cout << "expected 1 argument" << std::endl;
+//         else
+//             std::cout << hexTo64(hex{argv[2]}) << std::endl;
+//     }
+//
+//     else if (test == "fixed_xor") {
+//         if (argc != 4)
+//             std::cout << "expected 2 arguments" << std::endl;
+//         else
+//             std::cout << hexor(hex{argv[2]}, hex{argv[3]}).raw << std::endl;
+//     }
+//
+//     else if (test == "single_byte_xor_cipher") {
+//         if (argc != 3)
+//             std::cout << "expected 1 argument" << std::endl;
+//         auto [decrypted, stringScore, key] =
+//             single_byte_xor_cipher(hex{argv[2]});
+//         std::cout << "key: " << key << std::endl
+//                   << decrypted.toString() << std::endl;
+//     }
+//
+//     else if (test == "detect_single_byte_xor") {
+//         if (argc != 2)
+//             std::cout << "expected no arguments" << std::endl;
+//         else {
+//             std::ifstream file{"test/data/s1c4.txt"};
+//             std::vector<hex> v;
+//             for (std::string s; file >> s;) {
+//                 // std::cout << s << std::endl;
+//                 hex input = hex{s};
+//                 v.push_back(hex{s});
+//             }
+//             auto [decrypted, stringScore, key] = detect_single_byte_xor(v);
+//             std::cout << "key: " << key << std::endl
+//                       << decrypted.toString() << std::endl;
+//             file.close();
+//         }
+//     }
+//
+//     else if (test == "repeating_key_xor") {
+//         if (argc != 4)
+//             std::cout << "expected 2 arguments" << std::endl;
+//         else {
+//             std::cout << repeating_key_xor(argv[2], argv[3]).raw <<
+//             std::endl;
+//         }
+//     }
+//
+//     else if (test == "hamming") {
+//         if (argc != 4)
+//             std::cout << "expected 2 arguments" << std::endl;
+//         else {
+//             std::cout << hammingDistance(argv[2], argv[3]) << std::endl;
+//         }
+//     }
+//
+//     else if (test == "break_repeating_key_xor") {
+//         std::ifstream file{"test/data/s1c6.txt"};
+//         std::string encrypted = "";
+//         for (std::string s; file >> s;) {
+//             encrypted += s;
+//         }
+//         hex decrypted = break_repeating_xor(b64ToHex(encrypted));
+//         std::cout << decrypted.toString() << std::endl;
+//     }
+//
+//     else if (test == "aes") {
+//         try {
+//             std::ifstream file{"test/data/s1c7.txt"};
+//             std::string encrypted = "";
+//             for (std::string s; file >> s;) {
+//                 encrypted += s;
+//             }
+//             hex cipher = b64ToHex(encrypted);
+//             hex ret = aes128_ecb_decrypt(cipher, "YELLOW SUBMARINE");
+//             std::cout << ret.toString() << std::endl;
+//         } catch (const char *message) {
+//             std::cout << message << std::endl;
+//         }
+//
+//     }
+//
+//     else if (test == "detect_aes") {
+//         try {
+//             std::ifstream file{"test/data/s1c8.txt"};
+//             std::vector<hex> in;
+//             for (std::string s; file >> s;) {
+//                 in.push_back(hex{s});
+//             }
+//             std::vector<hex> out = detect_aes_ecb(in);
+//             for (const auto &hx : out) {
+//                 std::cout << hx.raw << std::endl;
+//             }
+//         } catch (const char *message) {
+//             std::cout << message << std::endl;
+//         }
+//     }
+// }
