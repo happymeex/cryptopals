@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "../lib/aes.hpp"
+#include "../src/aes.hpp"
 
 TEST_CASE("inverseMixColumns", "[inverseMixColumns]"){
     block in = {
