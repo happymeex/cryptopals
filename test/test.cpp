@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "../src/hex.hpp"
+#include "../lib/hex.hpp"
 
 TEST_CASE("intToHex", "[intToHex]"){
     CHECK(intToHex(0, 1).raw == "0");

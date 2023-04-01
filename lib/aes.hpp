@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 #include <string>
-#include "../src/hex.hpp"
+#include "../lib/hex.hpp"
 
 /**
  * Represents a 4x4 matrix of bytes, column-major order.

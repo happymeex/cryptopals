@@ -7,9 +7,9 @@ test: test/aes_t.cpp build/aes.o build/hex.o build/test.o
 build/test.o: test/test.cpp
 	g++ -std=c++20 -c $^ -o $@
 
-build/hex.o: src/hex.cpp
+build/hex.o: lib/hex.cpp
 	g++ -std=c++20 -c $^ -o $@
 	
-build/aes.o: src/aes.cpp
+build/aes.o: lib/aes.cpp
 	g++ -std=c++20 -c $^ -o $@
 
