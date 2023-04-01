@@ -1,11 +1,10 @@
 #ifndef _AES_
 #define _AES_
 
-#include <iostream>
-#include <array>
-#include <vector>
-#include <string>
 #include "../src/hex.hpp"
+#include <array>
+#include <string>
+#include <vector>
 
 /**
  * Represents a 4x4 matrix of bytes, column-major order.
@@ -23,6 +22,5 @@ hex aes128_ecb_decrypt(const hex &cipher, const std::string &key);
  * Inverse Rijndael column mixing step.
  */
 block inverseMixColumns(const block &in);
-
 
 #endif

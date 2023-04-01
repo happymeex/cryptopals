@@ -11,7 +11,8 @@ struct hex {
 
     /**
      * Returns a string representing the hex's decoded string (via ASCII).
-     * Throws an error if the hex value does not represent the ASCII encoding of a string.
+     * Throws an error if the hex value does not represent the ASCII encoding of
+     * a string.
      */
     std::string toString();
 
