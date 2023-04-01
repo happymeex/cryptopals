@@ -1,5 +1,5 @@
-#include "aes.h"
-#include "Hex.h"
+#include "aes.hpp"
+#include "hex.hpp"
 
 std::array<int, 4> lastFour(const block &b){
     std::array<int, 4> ret;

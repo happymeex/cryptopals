@@ -1,4 +1,4 @@
-#include "../src/Hex.h"
+#include "../src/hex.hpp"
 #include <algorithm>
 #include <cctype>
 #include <fstream>
@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cmath>
-#include "../src/aes.h"
+#include "../src/aes.hpp"
 
 double CHAR_DISTRIBUTION[128];
 
