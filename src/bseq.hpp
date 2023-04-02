@@ -1,7 +1,6 @@
 #ifndef _BYTE_
 #define _BYTE_
 
-#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -38,7 +37,9 @@ class ByteSeq {
      *
      * @throws Error if hex value has odd length.
      */
-    ByteSeq(const hex &s);
+    ByteSeq(const hex &hx);
+
+    ByteSeq(const b64 &bsx);
 
     /**
      * Bitwise xor of two byte sequences.

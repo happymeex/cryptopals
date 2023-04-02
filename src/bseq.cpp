@@ -18,9 +18,48 @@ int intFromHexRaw(std::string s) { return std::stoi(s, 0, 16); }
 ByteSeq::ByteSeq(const hex &hx) {
     int len = hx.raw.length();
     if (len % 2 != 0)
-        throw "hex value of odd length does not represent byte sequence";
+        throw "hex -> byteseq conversion requires even length";
     for (int i = 0; i < hx.raw.length(); i += 2) {
         this->seq.push_back(intFromHexRaw(hx.raw.substr(i, 2)));
+    }
+}
+
+/**
+ * Converts a single character to the base 64 value it represents.
+ */
+uint8_t b64ToInt(char c) {
+    if (std::isupper(c))
+        return c - 'A';
+    else if (std::islower(c))
+        return c - 'a' + 26;
+    else if (std::isdigit(c))
+        return c - '0' + 52;
+    else if (c == '+')
+        return 62;
+    else if (c == '/')
+        return 63;
+    throw "invalid base64";
+}
+
+ByteSeq::ByteSeq(const b64 &bsx) {
+    int len = bsx.raw.length();
+    if (len % 4 != 0)
+        throw "base 64 -> byteseq conversion requires length divisible by 4";
+    int chunks = len / 4;
+    for (int i = 0; i < chunks; i++) {
+        int j = 4 * i;
+        if (bsx.raw[j] == '=' || bsx.raw[j + 1] == '=')
+            throw "unexpected char `=` while parsing base 64";
+        uint8_t vals[4];
+        for (int t = i; t < i + 4; t++)
+            vals[t] = bsx.raw[t] == '=' ? 64 : b64ToInt(bsx.raw[t]);
+        this->seq.push_back(vals[0] << 2 | vals[1] >> 4);
+        if (vals[2] < 64) {
+            this->seq.push_back((vals[1] << 4) | vals[2] >> 2);
+            if (vals[3] < 64) {
+                this->seq.push_back(vals[3] | vals[2] << 6);
+            }
+        }
     }
 }
 
