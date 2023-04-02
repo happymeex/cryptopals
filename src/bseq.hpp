@@ -1,10 +1,17 @@
 #ifndef _BYTE_
 #define _BYTE_
 
-#include "hex.hpp"
 #include <cstddef>
 #include <string>
 #include <vector>
+
+struct hex {
+    std::string raw;
+};
+
+struct b64 {
+    std::string raw;
+};
 
 namespace byteseq {
 /**
@@ -13,13 +20,13 @@ namespace byteseq {
 class ByteSeq {
   private:
     // The byte sequence.
-    std::vector<std::byte> seq;
+    std::vector<uint8_t> seq;
 
   public:
     /**
      * Constructs a byte sequence from the vector of bytes.
      */
-    ByteSeq(std::vector<std::byte> seq);
+    ByteSeq(std::vector<uint8_t> seq);
 
     /**
      * Constructs a byte sequence from a string, byte-for-byte.
@@ -37,6 +44,12 @@ class ByteSeq {
      * Bitwise xor of two byte sequences.
      */
     ByteSeq operator^(const ByteSeq &b) const;
+
+    // Convert byte sequence to hex.
+    hex toHex() const;
+
+    // Convert byte sequence to b64.
+    b64 toB64() const;
 };
 } // namespace byteseq
 
