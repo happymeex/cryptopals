@@ -15,14 +15,14 @@ FLAGS = -std=c++20
 build/hex.o: src/hex.cpp
 	g++ $(FLAGS) -c $^ -o $@
 	
-#build/aes.o: src/aes.cpp
-#	g++ $(FLAGS) -c $^ -o $@
-#
+build/aes.o: src/aes.cpp
+	g++ $(FLAGS) -c $^ -o $@
+
 build/utils.o: src/utils.cpp
 	g++ $(FLAGS) -c $^ -o $@
 
 build/set1.o: src/set1.cpp
 	g++ $(FLAGS) -c $^ -o $@
 
-test_set1: test/test_set1.cpp build/set1.o build/hex.o build/utils.o
+test_set1: test/test_set1.cpp build/set1.o build/hex.o build/utils.o build/aes.o
 	g++ $(FLAGS) $^ -o build/test_set1
