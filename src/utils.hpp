@@ -11,6 +11,8 @@
  *
  * @returns the Bhattacharyya coefficient. Larger indicates more likely to be
  * English. Always between 0 and 1.
+ * @throws error if `s` is not a valid string (i.e. characters have negative
+ * ASCII value)
  */
 double score(std::string s);
 

@@ -22,7 +22,7 @@ ByteSeq::ByteSeq(const hex &hx) {
         throw "hex -> byteseq conversion requires even length";
     for (int i = 0; i < hx.raw.length(); i += 2) {
         int byte = intFromHexRaw(hx.raw.substr(i, 2));
-        if (byte > 255 || byte < 0)
+        if (byte > 127 || byte < 0)
             throw "cannot construct byte sequence from invalid hex input";
         this->seq.push_back(byte);
     }
@@ -64,6 +64,10 @@ ByteSeq::ByteSeq(const b64 &bsx) {
                 this->seq.push_back(vals[3] | vals[2] << 6);
             }
         }
+    }
+    for (auto c : this->seq) {
+        if (c > 127)
+            throw "cannot construct byte sequence from invalid b64 input";
     }
 }
 

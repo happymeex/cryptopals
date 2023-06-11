@@ -34,10 +34,16 @@ class ByteSeq {
     /**
      * Constructs a byte sequence from a hex value.
      *
-     * @throws Error if hex value has odd length.
+     * @throws Error if hex value has odd length or if hex does not
+     * correspond to an ASCII string
      */
     ByteSeq(const hex &hx);
 
+    /**
+     * Constructs a byte sequence from a base 64 value.
+     *
+     * @throws Error if the input does not correspond to an ASCII string
+     */
     ByteSeq(const b64 &bsx);
 
     /**

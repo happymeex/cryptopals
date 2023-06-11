@@ -39,16 +39,11 @@ detect_single_byte_xor(const std::vector<ByteSeq> &v) {
     ByteSeq best{""};
     int bestKey = -1;
     for (ByteSeq bs : v) {
-        try {
-            auto [decrypted, stringScore, key] = single_byte_xor_cipher(bs);
-            if (stringScore > highestScore) {
-                highestScore = stringScore;
-                best = decrypted;
-                bestKey = key;
-            }
-        } catch (const char *msg) {
-            // catch gibberish hex (i.e. not arising from ASCII text encryption)
-            continue;
+        auto [decrypted, stringScore, key] = single_byte_xor_cipher(bs);
+        if (stringScore > highestScore) {
+            highestScore = stringScore;
+            best = decrypted;
+            bestKey = key;
         }
     }
     return std::tuple<ByteSeq, double, char>{best, highestScore, bestKey};

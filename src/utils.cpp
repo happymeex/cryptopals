@@ -1,6 +1,5 @@
 #include "utils.hpp"
 #include "bseq.hpp"
-#include <iostream>
 #include <math.h>
 #include <string>
 
