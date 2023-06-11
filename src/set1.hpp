@@ -13,8 +13,7 @@
  * (Bhattacharyya index) as a metric of likelihood of English, and the character
  * key used to generate the encryption
  */
-std::tuple<byteseq::ByteSeq, double, char>
-single_byte_xor_cipher(byteseq::ByteSeq bs);
+std::tuple<ByteSeq, double, char> single_byte_xor_cipher(ByteSeq bs);
 
 /**
  * Given a vector of hex strings, determine the string

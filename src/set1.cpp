@@ -12,35 +12,16 @@
 #include <unordered_map>
 #include <unordered_set>
 
-// double CHAR_DISTRIBUTION[128];
-
-/**
- * Helper function run once by main to load English character frequency data
- */
-// void makeCharFreq() {
-//     std::ifstream freq{"test/data/char_freqs.txt"};
-//     for (int i = 0; i < 128; i++) {
-//         int c;
-//         freq >> c;
-//         char colon;
-//         freq >> colon;
-//         double frequency;
-//         freq >> frequency;
-//         CHAR_DISTRIBUTION[c] = frequency;
-//     }
-// }
-
-std::tuple<byteseq::ByteSeq, double, char>
-single_byte_xor_cipher(byteseq::ByteSeq bs) {
+std::tuple<ByteSeq, double, char> single_byte_xor_cipher(ByteSeq bs) {
     if (bs.length() == 0)
         throw "single byte xor called on empty byte sequence";
     int len = bs.length();
     double highestScore = 0;
-    byteseq::ByteSeq best{""};
+    ByteSeq best{""};
     int bestKey = -1;
     for (int i = 0; i < 128; i++) {
-        byteseq::ByteSeq key = byteseq::ByteSeq{std::string(len, i)};
-        byteseq::ByteSeq decrypted = bs ^ key;
+        ByteSeq key = ByteSeq{std::string(len, i)};
+        ByteSeq decrypted = bs ^ key;
         double stringScore = score(decrypted.toString());
         if (stringScore > highestScore) {
             best = decrypted;
@@ -48,8 +29,7 @@ single_byte_xor_cipher(byteseq::ByteSeq bs) {
             bestKey = i;
         }
     }
-    return std::tuple<byteseq::ByteSeq, double, char>{best, highestScore,
-                                                      bestKey};
+    return std::tuple<ByteSeq, double, char>{best, highestScore, bestKey};
 }
 
 // std::tuple<hex, double, char>

@@ -12,7 +12,6 @@ struct b64 {
     std::string raw;
 };
 
-namespace byteseq {
 /**
  * An immutable data type representing a sequence of bytes.
  */
@@ -58,6 +57,5 @@ class ByteSeq {
     // Convert byte sequence to b64.
     b64 toB64() const;
 };
-} // namespace byteseq
 
 #endif

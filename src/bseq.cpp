@@ -1,7 +1,7 @@
 #include "bseq.hpp"
 #include <iostream>
 
-using namespace byteseq;
+// using namespace byteseq;
 
 ByteSeq::ByteSeq(std::vector<uint8_t> seq) : seq(seq) {}
 
