@@ -82,6 +82,18 @@ ByteSeq ByteSeq::operator^(const ByteSeq &b) const {
     return ByteSeq{ret};
 }
 
+ByteSeq ByteSeq::operator+(const ByteSeq &b) const {
+    std::vector<uint8_t> ret = this->seq;
+    for (auto c : b.seq)
+        ret.push_back(c);
+    return ret;
+}
+
+ByteSeq ByteSeq::subseq(int start, int end) const {
+    std::vector<uint8_t> ret(&this->seq[start], &this->seq[end]);
+    return ByteSeq{ret};
+}
+
 int ByteSeq::length() const { return this->seq.size(); }
 
 std::string ByteSeq::toString() const {

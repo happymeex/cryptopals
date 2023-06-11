@@ -51,6 +51,17 @@ class ByteSeq {
      */
     ByteSeq operator^(const ByteSeq &b) const;
 
+    /**
+     * Concatenation of two byte sequences.
+     */
+    ByteSeq operator+(const ByteSeq &b) const;
+
+    /**
+     * Subsequence starting at index `start` up to but not including index
+     * `end`. Ignores out-of-bound indices.
+     */
+    ByteSeq subseq(int start, int end) const;
+
     // Length of the sequence.
     int length() const;
 

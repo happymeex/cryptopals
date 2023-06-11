@@ -64,21 +64,20 @@ TEST_CASE("Set 1 challenge 4: detect single byte xor") {
     CHECK(decrypted.toString() == s_out + "\n");
 }
 
-//
-// TEST_CASE("Set 1 challenge 5: repeating-key xor") {
-//     std::ifstream in{"test/input/s1c5.txt"};
-//     std::ifstream expected{"test/expected/s1c5.txt"};
-//     std::string input;
-//     std::string s_in, s_out;
-//     std::string key;
-//     getline(in, s_in);
-//     input = s_in + "\n";
-//     getline(in, s_in);
-//     input += s_in;
-//     in >> key;
-//     expected >> s_out;
-//     CHECK(repeating_key_xor(input, key).raw == s_out);
-// }
+TEST_CASE("Set 1 challenge 5: repeating-key xor") {
+    std::ifstream in{"test/input/s1c5.txt"};
+    std::ifstream expected{"test/expected/s1c5.txt"};
+    std::string input;
+    std::string s_in, s_out;
+    std::string key;
+    getline(in, s_in);
+    input = s_in + "\n";
+    getline(in, s_in);
+    input += s_in;
+    in >> key;
+    expected >> s_out;
+    CHECK(repeating_key_xor(ByteSeq{input}, ByteSeq{key}).toHex().raw == s_out);
+}
 //
 // TEST_CASE("Set 1 challenge 6: break repeating-key xor") {
 //     std::ifstream in{"test/input/s1c6.txt"};

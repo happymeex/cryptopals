@@ -48,89 +48,87 @@ detect_single_byte_xor(const std::vector<ByteSeq> &v) {
     }
     return std::tuple<ByteSeq, double, char>{best, highestScore, bestKey};
 }
+ByteSeq repeating_key_xor(ByteSeq bs, ByteSeq key) {
+    while (key.length() < bs.length()) {
+        key = key + key;
+    }
+    key = key.subseq(0, bs.length());
+    return bs ^ key;
+}
 //
-// hex repeating_key_xor(hex hx, hex key) {
-//     if (!hx.isValidString() || !key.isValidString())
-//         throw "these hex values do not represent strings";
-//     while (key.raw.length() < hx.raw.length()) {
-//         key.raw += key.raw;
-//     }
-//     return hexor(hx, key);
-// }
+//  hex repeating_key_xor(std::string cipher, std::string keyString) {
+//      return repeating_key_xor(toHex(cipher), toHex(keyString));
+//  }
 //
-// hex repeating_key_xor(std::string cipher, std::string keyString) {
-//     return repeating_key_xor(toHex(cipher), toHex(keyString));
-// }
+//  hex break_repeating_xor(const hex hx) {
+//      // start by guessing the keysize: for each guessed size,
+//      int upperBound = std::min(40, (int)hx.raw.length() / 4);
+//      std::vector<std::pair<int, double>> keySize{{2, 8}, {3, 8}};
+//      const int numSamples = 50;
+//      for (int guess = 2; guess < upperBound; guess++) {
+//          std::vector<hex> samples;
+//          for (int j = 0; j < numSamples && 2 * j * guess < hx.raw.length();
+//               j++) {
+//              samples.push_back(toHex(hx.raw.substr(2 * j * guess, 2 *
+//              guess)));
+//          }
+//          double totalHamming = 0;
+//          for (int i = 0; i < samples.size(); i++) {
+//              for (int j = i + 1; j < samples.size(); j++) {
+//                  totalHamming += hammingDistance(samples[i], samples[j]);
+//              }
+//          }
+//          double avgHamming =
+//              totalHamming / (guess * numSamples * (numSamples - 1) / 2.0);
+//          for (int i = 0; i < keySize.size(); i++) {
+//              if (avgHamming < keySize[i].second) {
+//                  keySize[i] = {guess, avgHamming};
+//                  break;
+//              }
+//          }
+//      }
 //
-// hex break_repeating_xor(const hex hx) {
-//     // start by guessing the keysize: for each guessed size,
-//     int upperBound = std::min(40, (int)hx.raw.length() / 4);
-//     std::vector<std::pair<int, double>> keySize{{2, 8}, {3, 8}};
-//     const int numSamples = 50;
-//     for (int guess = 2; guess < upperBound; guess++) {
-//         std::vector<hex> samples;
-//         for (int j = 0; j < numSamples && 2 * j * guess < hx.raw.length();
-//              j++) {
-//             samples.push_back(toHex(hx.raw.substr(2 * j * guess, 2 *
-//             guess)));
-//         }
-//         double totalHamming = 0;
-//         for (int i = 0; i < samples.size(); i++) {
-//             for (int j = i + 1; j < samples.size(); j++) {
-//                 totalHamming += hammingDistance(samples[i], samples[j]);
-//             }
-//         }
-//         double avgHamming =
-//             totalHamming / (guess * numSamples * (numSamples - 1) / 2.0);
-//         for (int i = 0; i < keySize.size(); i++) {
-//             if (avgHamming < keySize[i].second) {
-//                 keySize[i] = {guess, avgHamming};
-//                 break;
-//             }
-//         }
-//     }
+//      // std::cout << "keysize guess: " << keySize[0].first << " " <<
+//      // keySize[1].first << std::endl;
+//      std::vector<hex> ret;
+//      for (auto [size, _] : keySize) {
+//          std::vector<hex> block;
+//          for (int i = 0; i < size; i++)
+//              block.push_back(hex{""});
+//          int len = hx.raw.length();
+//          for (int i = 0; i < len; i += 2) {
+//              block[(i / 2) % size].raw += hx.raw.substr(i, 2);
+//          }
+//          std::string key = "";
+//          for (const auto &hxi : block) {
+//              auto [_, __, blockKey] = single_byte_xor_cipher(hxi);
+//              key += blockKey;
+//          }
+//          ret.push_back(repeating_key_xor(hx, toHex(key)));
+//      }
+//      // std::cout << "Guesses: " << ret[0].toString() << std::endl <<
+//      // ret[1].toString() << std::endl;
+//      return ret[0];
+//  }
 //
-//     // std::cout << "keysize guess: " << keySize[0].first << " " <<
-//     // keySize[1].first << std::endl;
-//     std::vector<hex> ret;
-//     for (auto [size, _] : keySize) {
-//         std::vector<hex> block;
-//         for (int i = 0; i < size; i++)
-//             block.push_back(hex{""});
-//         int len = hx.raw.length();
-//         for (int i = 0; i < len; i += 2) {
-//             block[(i / 2) % size].raw += hx.raw.substr(i, 2);
-//         }
-//         std::string key = "";
-//         for (const auto &hxi : block) {
-//             auto [_, __, blockKey] = single_byte_xor_cipher(hxi);
-//             key += blockKey;
-//         }
-//         ret.push_back(repeating_key_xor(hx, toHex(key)));
-//     }
-//     // std::cout << "Guesses: " << ret[0].toString() << std::endl <<
-//     // ret[1].toString() << std::endl;
-//     return ret[0];
-// }
-//
-// std::vector<hex> detect_aes_ecb(const std::vector<hex> &in) {
-//     std::vector<hex> ret;
-//     for (hex hx : in) {
-//         int len = hx.raw.length();
-//         if (len % 32 != 0)
-//             throw "improperly padded hex value";
-//         std::unordered_set<std::string> blocks;
-//         for (int i = 0; i < len; i += 32) {
-//             std::string block = hx.raw.substr(i, 32);
-//             if (blocks.contains(block)) {
-//                 ret.push_back(hx);
-//                 break;
-//             }
-//             blocks.insert(block);
-//         }
-//     }
-//     return ret;
-// }
+//  std::vector<hex> detect_aes_ecb(const std::vector<hex> &in) {
+//      std::vector<hex> ret;
+//      for (hex hx : in) {
+//          int len = hx.raw.length();
+//          if (len % 32 != 0)
+//              throw "improperly padded hex value";
+//          std::unordered_set<std::string> blocks;
+//          for (int i = 0; i < len; i += 32) {
+//              std::string block = hx.raw.substr(i, 32);
+//              if (blocks.contains(block)) {
+//                  ret.push_back(hx);
+//                  break;
+//              }
+//              blocks.insert(block);
+//          }
+//      }
+//      return ret;
+//  }
 
 // int main(int argc, char **argv) {
 //     makeCharFreq();

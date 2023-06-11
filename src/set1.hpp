@@ -23,16 +23,9 @@ std::tuple<ByteSeq, double, char>
 detect_single_byte_xor(const std::vector<ByteSeq> &v);
 
 /**
- * Returns the repeating key xor encryption of a hex string by a hex key,
- * assuming both are encodings of ASCII strings.
+ * Returns the repeating key xor encryption of one byte sequence by another.
  */
-hex repeating_key_xor(hex hx, hex key);
-
-/**
- * Returns the repeating key xor encryption of a cipher
- * string by a key string.
- */
-hex repeating_key_xor(std::string cipher, std::string keyString);
+ByteSeq repeating_key_xor(ByteSeq bs, ByteSeq key);
 
 /**
  * Given a hex value assumed to be a cipher encrypted using
