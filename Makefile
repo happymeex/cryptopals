@@ -27,5 +27,5 @@ build/set1.o: src/set1.cpp
 build/bseq.o: src/bseq.cpp src/bseq.hpp
 	g++ $(FLAGS) -c $< -o $@
 
-test_set1: test/test_set1.cpp build/set1.o build/hex.o build/utils.o build/aes.o
+test_set1: test/test_set1.cpp build/bseq.o build/set1.o build/utils.o
 	g++ $(FLAGS) $^ -o build/test_set1

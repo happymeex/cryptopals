@@ -1,7 +1,7 @@
 #ifndef _AES_
 #define _AES_
 
-#include "../src/hex.hpp"
+#include "../src/bseq.hpp"
 #include <array>
 #include <string>
 #include <vector>

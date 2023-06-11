@@ -1,4 +1,5 @@
 #include "bseq.hpp"
+#include <iostream>
 
 using namespace byteseq;
 
@@ -74,12 +75,23 @@ ByteSeq ByteSeq::operator^(const ByteSeq &b) const {
     return ByteSeq{ret};
 }
 
+int ByteSeq::length() const { return this->seq.size(); }
+
+std::string ByteSeq::toString() const {
+    std::string ret = "";
+    for (auto c : this->seq) {
+        ret += c;
+    }
+    return ret;
+}
+
 const std::string hexConversion = "0123456789abcdef";
 
 hex ByteSeq::toHex() const {
     hex hx{""};
     for (uint8_t b : this->seq) {
-        hx.raw += hexConversion[b >> 4] + hexConversion[b | 15];
+        hx.raw += hexConversion[b >> 4];
+        hx.raw += hexConversion[b & 15];
     }
     return hx;
 }
@@ -94,23 +106,25 @@ b64 ByteSeq::toB64() const {
     int chunks = this->seq.size() / 3;
     for (int i = 0; i < chunks; i++) {
         int j = 3 * i;
+        bsx.raw += B64.at(this->seq.at(j) >> 2);
         bsx.raw +=
-            B64[this->seq.at(j) >> 2] +
-            B64[((this->seq.at(j) | 3) << 4) | (this->seq.at(j + 1) >> 4)] +
-            B64[((this->seq.at(j + 1) | 15) << 2) |
-                (this->seq.at(j + 2) >> 6)] +
-            B64[this->seq.at(j + 2) | 63];
+            B64.at(((this->seq.at(j) & 3) << 4) | (this->seq.at(j + 1) >> 4));
+        bsx.raw += B64.at(((this->seq.at(j + 1) & 15) << 2) |
+                          (this->seq.at(j + 2) >> 6));
+        bsx.raw += B64.at(this->seq.at(j + 2) & 63);
     }
     if (this->seq.size() % 3 == 1) {
         int j = 3 * chunks;
-        bsx.raw +=
-            B64[this->seq.at(j) >> 2] + B64[(this->seq.at(j) | 3) << 4] + "==";
+        bsx.raw += B64.at(this->seq.at(j) >> 2);
+        bsx.raw += B64.at((this->seq.at(j) & 3) << 4);
+        bsx.raw += "==";
     } else if (this->seq.size() % 3 == 2) {
         int j = 3 * chunks;
+        bsx.raw += B64.at(this->seq.at(j) >> 2);
         bsx.raw +=
-            B64[this->seq.at(j) >> 2] +
-            B64[((this->seq.at(j) | 3) << 4) | (this->seq.at(j + 1) >> 4)] +
-            B64[(this->seq.at(j + 1) | 15) << 2] + "=";
+            B64.at(((this->seq.at(j) & 3) << 4) | (this->seq.at(j + 1) >> 4));
+        bsx.raw += B64.at((this->seq.at(j + 1) & 15) << 2);
+        bsx.raw += "=";
     }
     return bsx;
 }

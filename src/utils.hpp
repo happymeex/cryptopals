@@ -1,7 +1,7 @@
 #ifndef _UTILS_
 #define _UTILS_
 
-#include "hex.hpp"
+#include "bseq.hpp"
 #include <string>
 
 /**

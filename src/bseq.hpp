@@ -46,6 +46,12 @@ class ByteSeq {
      */
     ByteSeq operator^(const ByteSeq &b) const;
 
+    // Length of the sequence.
+    int length() const;
+
+    // Collate the byte sequence into a human-readable string.
+    std::string toString() const;
+
     // Convert byte sequence to hex.
     hex toHex() const;
 

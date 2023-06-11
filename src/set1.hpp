@@ -1,19 +1,20 @@
 #ifndef _SET1_
 #define _SET1_
 
-#include "hex.hpp"
+#include "bseq.hpp"
 #include <vector>
 
 /**
- * Given a hex string assumed to be an encryption of
+ * Given a byte sequence assumed to be an encryption of
  * an English message using single-byte xor, returns the most likely decrypted
- * hex.
+ * byte sequence.
  *
- * @returns a tuple consisting of the decrypted hex, its score (Bhattacharyya
- * index) as a metric of likelihood of English, and the character key used to
- * generate the encryption
+ * @returns a tuple consisting of decrypted byte sequence, its score
+ * (Bhattacharyya index) as a metric of likelihood of English, and the character
+ * key used to generate the encryption
  */
-std::tuple<hex, double, char> single_byte_xor_cipher(hex hx);
+std::tuple<byteseq::ByteSeq, double, char>
+single_byte_xor_cipher(byteseq::ByteSeq bs);
 
 /**
  * Given a vector of hex strings, determine the string
