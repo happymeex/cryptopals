@@ -12,7 +12,7 @@ ByteSeq::ByteSeq(const std::string &s) {
 }
 
 /**
- * Converts a string represented an unsigned hex value to an integer.
+ * Converts a string representing an unsigned hex value to an integer.
  */
 int intFromHexRaw(std::string s) { return std::stoi(s, 0, 16); }
 
@@ -21,7 +21,10 @@ ByteSeq::ByteSeq(const hex &hx) {
     if (len % 2 != 0)
         throw "hex -> byteseq conversion requires even length";
     for (int i = 0; i < hx.raw.length(); i += 2) {
-        this->seq.push_back(intFromHexRaw(hx.raw.substr(i, 2)));
+        int byte = intFromHexRaw(hx.raw.substr(i, 2));
+        if (byte > 255 || byte < 0)
+            throw "cannot construct byte sequence from invalid hex input";
+        this->seq.push_back(byte);
     }
 }
 

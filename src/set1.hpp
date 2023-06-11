@@ -19,7 +19,8 @@ std::tuple<ByteSeq, double, char> single_byte_xor_cipher(ByteSeq bs);
  * Given a vector of hex strings, determine the string
  * most likely to be an English message encrypted with single-byte xor.
  */
-std::tuple<hex, double, char> detect_single_byte_xor(const std::vector<hex> &v);
+std::tuple<ByteSeq, double, char>
+detect_single_byte_xor(const std::vector<ByteSeq> &v);
 
 /**
  * Returns the repeating key xor encryption of a hex string by a hex key,

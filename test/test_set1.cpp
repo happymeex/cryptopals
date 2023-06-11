@@ -39,25 +39,25 @@ TEST_CASE("Set 1 challenge 3: single byte xor cipher") {
     CHECK(key == expected_key);
     CHECK(decrypted.toString() == s_out);
 }
-//
-// TEST_CASE("Set 1 challenge 4: detect single byte xor") {
-//     std::ifstream in{"test/input/s1c4.txt"};
-//     std::ifstream expected{"test/expected/s1c4.txt"};
-//
-//     std::vector<hex> v;
-//     for (std::string s; in >> s;) {
-//         hex input = hex{s};
-//         v.push_back(hex{s});
-//     }
-//     auto [decrypted, stringScore, key] = detect_single_byte_xor(v);
-//     char expected_key;
-//     std::string s_out;
-//     expected >> expected_key;
-//     expected.ignore();
-//     std::getline(expected, s_out);
-//     CHECK(key == expected_key);
-//     CHECK(decrypted.toString() == s_out + "\n");
-// }
+
+TEST_CASE("Set 1 challenge 4: detect single byte xor") {
+    std::ifstream in{"test/input/s1c4.txt"};
+    std::ifstream expected{"test/expected/s1c4.txt"};
+
+    std::vector<ByteSeq> v;
+    for (std::string s; in >> s;) {
+        ByteSeq input = ByteSeq{hex{s}};
+        v.push_back(input);
+    }
+    auto [decrypted, stringScore, key] = detect_single_byte_xor(v);
+    char expected_key;
+    std::string s_out;
+    expected >> expected_key;
+    expected.ignore();
+    std::getline(expected, s_out);
+    CHECK(key == expected_key);
+    CHECK(decrypted.toString() == s_out + "\n");
+}
 //
 // TEST_CASE("Set 1 challenge 5: repeating-key xor") {
 //     std::ifstream in{"test/input/s1c5.txt"};

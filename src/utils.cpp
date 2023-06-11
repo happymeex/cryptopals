@@ -1,5 +1,6 @@
 #include "utils.hpp"
 #include "bseq.hpp"
+#include <iostream>
 #include <math.h>
 #include <string>
 
@@ -135,9 +136,12 @@ double CHAR_DISTRIBUTION[128] = {0,
 double score(std::string s) {
     int len = s.length();
     double freqs[128]{0};
-    for (auto c : s) {
+    for (char c : s) {
         if (c > 127) {
             continue;
+        }
+        if (c < 0) {
+            throw "cannot calculate score of invalid string";
         }
         freqs[c] += ((double)1) / len;
     }

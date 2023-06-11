@@ -6,6 +6,7 @@
 #include <cctype>
 #include <cmath>
 #include <fstream>
+#include <iostream>
 #include <math.h>
 #include <numbers>
 #include <string>
@@ -32,26 +33,26 @@ std::tuple<ByteSeq, double, char> single_byte_xor_cipher(ByteSeq bs) {
     return std::tuple<ByteSeq, double, char>{best, highestScore, bestKey};
 }
 
-// std::tuple<hex, double, char>
-// detect_single_byte_xor(const std::vector<hex> &v) {
-//     double highestScore = 0;
-//     hex best;
-//     int bestKey = -1;
-//     for (hex hx : v) {
-//         try {
-//             auto [decrypted, stringScore, key] = single_byte_xor_cipher(hx);
-//             if (stringScore > highestScore) {
-//                 highestScore = stringScore;
-//                 best = decrypted;
-//                 bestKey = key;
-//             }
-//         } catch (const char *msg) {
-//             // catch gibberish hex (i.e. not arising from ASCII text
-//             encryption) continue;
-//         }
-//     }
-//     return std::tuple<hex, double, char>{best, highestScore, bestKey};
-// }
+std::tuple<ByteSeq, double, char>
+detect_single_byte_xor(const std::vector<ByteSeq> &v) {
+    double highestScore = 0;
+    ByteSeq best{""};
+    int bestKey = -1;
+    for (ByteSeq bs : v) {
+        try {
+            auto [decrypted, stringScore, key] = single_byte_xor_cipher(bs);
+            if (stringScore > highestScore) {
+                highestScore = stringScore;
+                best = decrypted;
+                bestKey = key;
+            }
+        } catch (const char *msg) {
+            // catch gibberish hex (i.e. not arising from ASCII text encryption)
+            continue;
+        }
+    }
+    return std::tuple<ByteSeq, double, char>{best, highestScore, bestKey};
+}
 //
 // hex repeating_key_xor(hex hx, hex key) {
 //     if (!hx.isValidString() || !key.isValidString())
