@@ -1,5 +1,5 @@
 #include "aes.hpp"
-#include "hex.hpp"
+#include "bseq.hpp"
 
 std::array<int, 4> lastFour(const block &b) {
     std::array<int, 4> ret;
@@ -263,31 +263,34 @@ block invRound(block b, const block &key, bool diffusion = true,
     return ret;
 }
 
-std::vector<block> hexToBlocks(const hex &cipher) {
-    int len = cipher.raw.length();
-    if (len % 32 != 0)
+/**
+ * Utility function to break up a cipher into a sequence of blocks.
+ */
+std::vector<block> toBlocks(const ByteSeq &cipher) {
+    int len = cipher.length();
+    if (len % 16 != 0)
         throw "aes: improperly padded hex (num bytes should be multiple of 16)";
     std::vector<block> ret;
     int index = 0;
     block b;
     while (index < len) {
         for (int i = 0; i < 16; i++) {
-            b[i] = intFromHexRaw(cipher.raw.substr(index + 2 * i, 2));
+            b[i] = cipher.at(index + i);
         }
         ret.push_back(b);
-        index += 32;
+        index += 16;
     }
     return ret;
 }
 
-hex aes128_ecb_decrypt(const hex &cipher, const std::string &key) {
+ByteSeq aes128_ecb_decrypt(const ByteSeq &cipher, const std::string &key) {
     if (key.length() != 16)
         throw "key should be 16 bytes";
     block initialKey;
     for (int i = 0; i < 16; i++)
         initialKey[i] = key[i];
     std::vector<block> keys = keySchedule(initialKey, 10);
-    std::vector<block> blocks = hexToBlocks(cipher);
+    std::vector<block> blocks = toBlocks(cipher);
 
     for (int round = 10; round >= 0; round--) {
         for (int i = 0; i < blocks.size(); i++) {
@@ -297,11 +300,12 @@ hex aes128_ecb_decrypt(const hex &cipher, const std::string &key) {
     }
 
     std::string raw = "";
+    std::vector<uint8_t> ret;
     for (auto block : blocks) {
         for (int i : block) {
-            raw += intToHex(i, 2).raw;
+            ret.push_back(i);
         }
     }
 
-    return hex{raw};
+    return ByteSeq{ret};
 }

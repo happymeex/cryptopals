@@ -42,9 +42,10 @@ class ByteSeq {
     /**
      * Constructs a byte sequence from a base 64 value.
      *
-     * @throws Error if the input does not correspond to an ASCII string
+     * @throws Error if `strict` is true and the input does not correspond to an
+     * ASCII string
      */
-    ByteSeq(const b64 &bsx);
+    ByteSeq(const b64 &bsx, bool strict = true);
 
     /**
      * Bitwise xor of two byte sequences.
@@ -55,6 +56,12 @@ class ByteSeq {
      * Concatenation of two byte sequences.
      */
     ByteSeq operator+(const ByteSeq &b) const;
+
+    /**
+     * Retrieves the element of the sequence at `index`.
+     * @throws error if `index` is out of bounds.
+     */
+    uint8_t at(int index) const;
 
     /**
      * Subsequence starting at index `start` up to but not including index

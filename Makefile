@@ -30,5 +30,5 @@ build/bseq.o: src/bseq.cpp src/bseq.hpp
 test_utils: test/test_utils.cpp build/bseq.o build/utils.o
 	g++ $(FLAGS) $^ -o build/test_utils
 
-test_set1: test/test_set1.cpp build/bseq.o build/set1.o build/utils.o
+test_set1: test/test_set1.cpp build/bseq.o build/set1.o build/aes.o build/utils.o
 	g++ $(FLAGS) $^ -o build/test_set1

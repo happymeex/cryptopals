@@ -45,7 +45,7 @@ int b64ToInt(char c) {
     throw "invalid base64";
 }
 
-ByteSeq::ByteSeq(const b64 &bsx) {
+ByteSeq::ByteSeq(const b64 &bsx, bool strict) {
     int len = bsx.raw.length();
     if (len % 4 != 0)
         throw "base 64 -> byteseq conversion requires length divisible by 4";
@@ -65,11 +65,15 @@ ByteSeq::ByteSeq(const b64 &bsx) {
             }
         }
     }
-    for (auto c : this->seq) {
-        if (c > 127)
-            throw "cannot construct byte sequence from invalid b64 input";
+    if (strict) {
+        for (auto c : this->seq) {
+            if (c > 127)
+                throw "cannot construct byte sequence from invalid b64 input";
+        }
     }
 }
+
+uint8_t ByteSeq::at(int index) const { return this->seq.at(index); }
 
 ByteSeq ByteSeq::operator^(const ByteSeq &b) const {
     std::vector<uint8_t> ret;

@@ -16,7 +16,7 @@ typedef std::array<int, 16> block;
  */
 std::array<int, 4> lastFour(const block &b);
 
-hex aes128_ecb_decrypt(const hex &cipher, const std::string &key);
+ByteSeq aes128_ecb_decrypt(const ByteSeq &cipher, const std::string &key);
 
 /**
  * Inverse Rijndael column mixing step.

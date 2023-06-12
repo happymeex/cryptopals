@@ -93,23 +93,23 @@ TEST_CASE("Set 1 challenge 6: break repeating-key xor") {
     ByteSeq bs{b64{s_in}};
     CHECK(break_repeating_xor(bs).toString() == s_out);
 }
-//
-//  TEST_CASE("Set 1 challenge 7: AES-128 ECB mode") {
-//      std::ifstream in{"test/input/s1c7.txt"};
-//      std::ifstream expected{"test/expected/s1c7.txt"};
-//
-//      std::string encrypted = "";
-//      for (std::string s; in >> s;) {
-//          encrypted += s;
-//      }
-//      std::string s_out;
-//      for (std::string input; getline(expected, input);) {
-//          s_out += input + "\n";
-//      }
-//      hex cipher = b64ToHex(encrypted);
-//      std::string ret = aes128_ecb_decrypt(cipher, "YELLOW
-//      SUBMARINE").toString(); CHECK(ret + "\n" == s_out);
-//  }
+
+TEST_CASE("Set 1 challenge 7: AES-128 ECB mode") {
+    std::ifstream in{"test/input/s1c7.txt"};
+    std::ifstream expected{"test/expected/s1c7.txt"};
+
+    std::string encrypted = "";
+    for (std::string s; in >> s;) {
+        encrypted += s;
+    }
+    std::string s_out;
+    for (std::string input; getline(expected, input);) {
+        s_out += input + "\n";
+    }
+    ByteSeq cipher = ByteSeq{b64{encrypted}, false}; // with strict mode off
+    std::string ret = aes128_ecb_decrypt(cipher, "YELLOW SUBMARINE").toString();
+    CHECK(ret + "\n" == s_out);
+}
 //
 //  TEST_CASE("Set 1 challenge 8: detect AES ECB mode") {
 //      std::ifstream in{"test/input/s1c8.txt"};
