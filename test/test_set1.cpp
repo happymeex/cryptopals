@@ -79,20 +79,20 @@ TEST_CASE("Set 1 challenge 5: repeating-key xor") {
     CHECK(repeating_key_xor(ByteSeq{input}, ByteSeq{key}).toHex().raw == s_out);
 }
 
-// TEST_CASE("Set 1 challenge 6: break repeating-key xor") {
-//     std::ifstream in{"test/input/s1c6.txt"};
-//     std::ifstream expected{"test/expected/s1c6.txt"};
-//     std::string s_in;
-//     for (std::string input; in >> input;) {
-//         s_in += input;
-//     }
-//     std::string s_out;
-//     for (std::string input; getline(expected, input);) {
-//         s_out += input + "\n";
-//     }
-//     ByteSeq bs{b64{s_in}};
-//     CHECK(break_repeating_xor(bs).toString() == s_out);
-// }
+TEST_CASE("Set 1 challenge 6: break repeating-key xor") {
+    std::ifstream in{"test/input/s1c6.txt"};
+    std::ifstream expected{"test/expected/s1c6.txt"};
+    std::string s_in;
+    for (std::string input; in >> input;) {
+        s_in += input;
+    }
+    std::string s_out;
+    for (std::string input; getline(expected, input);) {
+        s_out += input + "\n";
+    }
+    ByteSeq bs{b64{s_in}};
+    CHECK(break_repeating_xor(bs).toString() == s_out);
+}
 //
 //  TEST_CASE("Set 1 challenge 7: AES-128 ECB mode") {
 //      std::ifstream in{"test/input/s1c7.txt"};

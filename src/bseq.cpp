@@ -65,10 +65,10 @@ ByteSeq::ByteSeq(const b64 &bsx) {
             }
         }
     }
-    // for (auto c : this->seq) {
-    //     if (c > 127)
-    //         throw "cannot construct byte sequence from invalid b64 input";
-    // }
+    for (auto c : this->seq) {
+        if (c > 127)
+            throw "cannot construct byte sequence from invalid b64 input";
+    }
 }
 
 ByteSeq ByteSeq::operator^(const ByteSeq &b) const {

@@ -58,7 +58,6 @@ ByteSeq repeating_key_xor(ByteSeq bs, ByteSeq key) {
 }
 
 ByteSeq break_repeating_xor(const ByteSeq bs) {
-    std::cout << "break repeating xor on: " << bs.toString();
     // start by guessing the keysize: for each guessed size,
     int upperBound = std::min(40, bs.length() / 2);
     std::vector<std::pair<int, double>> keySize{{2, 8}, {3, 8}};
@@ -84,8 +83,8 @@ ByteSeq break_repeating_xor(const ByteSeq bs) {
         }
     }
 
-    std::cout << "keysize guess: " << keySize[0].first << " "
-              << keySize[1].first << std::endl;
+    // std::cout << "keysize guess: " << keySize[0].first << " "
+    //           << keySize[1].first << std::endl;
     std::vector<ByteSeq> ret;
     for (auto [size, _] : keySize) {
         std::vector<ByteSeq> block;
@@ -102,8 +101,8 @@ ByteSeq break_repeating_xor(const ByteSeq bs) {
         }
         ret.push_back(repeating_key_xor(bs, ByteSeq{key}));
     }
-    std::cout << "Guesses: " << ret[0].toString() << std::endl
-              << ret[1].toString() << std::endl;
+    // std::cout << "Guesses: " << ret[0].toString() << std::endl
+    //           << ret[1].toString() << std::endl;
     return ret[0];
 }
 //
