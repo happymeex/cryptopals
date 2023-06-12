@@ -162,3 +162,14 @@ b64 ByteSeq::toB64() const {
     }
     return bsx;
 }
+
+ByteSeq ByteSeq::pkcsPad(int target) const {
+    int diff = target - this->length();
+    if (diff < 0 || diff > 255)
+        throw "Cannot pad to target length";
+    std::vector<uint8_t> constSeq;
+    for (int i = 0; i < diff; i++) {
+        constSeq.push_back(diff);
+    }
+    return *this + ByteSeq{constSeq};
+}

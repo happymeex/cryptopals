@@ -83,6 +83,9 @@ class ByteSeq {
 
     // Convert byte sequence to b64.
     b64 toB64() const;
+
+    // Returns ByteSeq obtained by padding PKCS#7 padding to `target` length
+    ByteSeq pkcsPad(int target) const;
 };
 
 #endif
