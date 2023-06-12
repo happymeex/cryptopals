@@ -110,16 +110,16 @@ TEST_CASE("Set 1 challenge 7: AES-128 ECB mode") {
     std::string ret = aes128_ecb_decrypt(cipher, "YELLOW SUBMARINE").toString();
     CHECK(ret + "\n" == s_out);
 }
-//
-//  TEST_CASE("Set 1 challenge 8: detect AES ECB mode") {
-//      std::ifstream in{"test/input/s1c8.txt"};
-//      std::ifstream expected{"test/expected/s1c8.txt"};
-//      std::vector<hex> v;
-//      for (std::string s; in >> s;) {
-//          v.push_back(hex{s});
-//      }
-//      std::string s_out;
-//      expected >> s_out;
-//      std::vector<hex> out = detect_aes_ecb(v);
-//      CHECK(out.at(0).raw == s_out);
-//  }
+
+TEST_CASE("Set 1 challenge 8: detect AES ECB mode") {
+    std::ifstream in{"test/input/s1c8.txt"};
+    std::ifstream expected{"test/expected/s1c8.txt"};
+    std::vector<hex> v;
+    for (std::string s; in >> s;) {
+        v.push_back(hex{s});
+    }
+    std::string s_out;
+    expected >> s_out;
+    std::vector<hex> out = detect_aes_ecb(v);
+    CHECK(out.at(0).raw == s_out);
+}

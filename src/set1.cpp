@@ -105,22 +105,22 @@ ByteSeq break_repeating_xor(const ByteSeq bs) {
     //           << ret[1].toString() << std::endl;
     return ret[0];
 }
-//
-//  std::vector<hex> detect_aes_ecb(const std::vector<hex> &in) {
-//      std::vector<hex> ret;
-//      for (hex hx : in) {
-//          int len = hx.raw.length();
-//          if (len % 32 != 0)
-//              throw "improperly padded hex value";
-//          std::unordered_set<std::string> blocks;
-//          for (int i = 0; i < len; i += 32) {
-//              std::string block = hx.raw.substr(i, 32);
-//              if (blocks.contains(block)) {
-//                  ret.push_back(hx);
-//                  break;
-//              }
-//              blocks.insert(block);
-//          }
-//      }
-//      return ret;
-//  }
+
+std::vector<hex> detect_aes_ecb(const std::vector<hex> &in) {
+    std::vector<hex> ret;
+    for (hex hx : in) {
+        int len = hx.raw.length();
+        if (len % 32 != 0)
+            throw "improperly padded hex value";
+        std::unordered_set<std::string> blocks;
+        for (int i = 0; i < len; i += 32) {
+            std::string block = hx.raw.substr(i, 32);
+            if (blocks.contains(block)) {
+                ret.push_back(hx);
+                break;
+            }
+            blocks.insert(block);
+        }
+    }
+    return ret;
+}
