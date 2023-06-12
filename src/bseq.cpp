@@ -31,7 +31,7 @@ ByteSeq::ByteSeq(const hex &hx) {
 /**
  * Converts a single character to the base 64 value it represents.
  */
-uint8_t b64ToInt(char c) {
+int b64ToInt(char c) {
     if (std::isupper(c))
         return c - 'A';
     else if (std::islower(c))
@@ -52,11 +52,11 @@ ByteSeq::ByteSeq(const b64 &bsx) {
     int chunks = len / 4;
     for (int i = 0; i < chunks; i++) {
         int j = 4 * i;
-        if (bsx.raw[j] == '=' || bsx.raw[j + 1] == '=')
+        if (bsx.raw.at(j) == '=' || bsx.raw.at(j + 1) == '=')
             throw "unexpected char `=` while parsing base 64";
         uint8_t vals[4];
-        for (int t = i; t < i + 4; t++)
-            vals[t] = bsx.raw[t] == '=' ? 64 : b64ToInt(bsx.raw[t]);
+        for (int t = j; t < j + 4; t++)
+            vals[t - j] = bsx.raw.at(t) == '=' ? 64 : b64ToInt(bsx.raw.at(t));
         this->seq.push_back(vals[0] << 2 | vals[1] >> 4);
         if (vals[2] < 64) {
             this->seq.push_back((vals[1] << 4) | vals[2] >> 2);
@@ -65,10 +65,10 @@ ByteSeq::ByteSeq(const b64 &bsx) {
             }
         }
     }
-    for (auto c : this->seq) {
-        if (c > 127)
-            throw "cannot construct byte sequence from invalid b64 input";
-    }
+    // for (auto c : this->seq) {
+    //     if (c > 127)
+    //         throw "cannot construct byte sequence from invalid b64 input";
+    // }
 }
 
 ByteSeq ByteSeq::operator^(const ByteSeq &b) const {
@@ -95,6 +95,17 @@ ByteSeq ByteSeq::subseq(int start, int end) const {
 }
 
 int ByteSeq::length() const { return this->seq.size(); }
+
+int ByteSeq::hammingWeight() const {
+    int ret = 0;
+    for (auto val : this->seq) {
+        while (val) {
+            ret += val & 1;
+            val >>= 1;
+        }
+    }
+    return ret;
+}
 
 std::string ByteSeq::toString() const {
     std::string ret = "";

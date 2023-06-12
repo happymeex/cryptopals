@@ -65,6 +65,9 @@ class ByteSeq {
     // Length of the sequence.
     int length() const;
 
+    // Hamming weight (number of 1s in binary representation of byte sequence).
+    int hammingWeight() const;
+
     // Collate the byte sequence into a human-readable string.
     std::string toString() const;
 

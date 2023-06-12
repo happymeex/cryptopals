@@ -17,20 +17,11 @@
 double score(std::string s);
 
 /**
- * Computes the hamming distance between two strings (viewed
- * as binary strings via ASCII).
- *
- * @returns hamming distance, or -1 if strings have different length
- */
-int hammingDistance(std::string s1, std::string s2);
-
-/**
- * Computes the hamming distance between two hex values (viewed
+ * Computes the hamming distance between two byte sequences (viewed
  * as binary strings).
  *
- * @returns hamming distance, or -1 if strings have different length
  * @throws error if hex values have differing lengths
  */
-int hammingDistance(hex hx1, hex hx2);
+int hammingDistance(ByteSeq bs1, ByteSeq bs2);
 
 #endif

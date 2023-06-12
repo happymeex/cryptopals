@@ -151,28 +151,9 @@ double score(std::string s) {
     return bc;
 }
 
-// int hammingDistance(hex hx1, hex hx2) {
-//     if (hx1.raw.length() != hx2.raw.length())
-//         throw "cannot compute hamming distance between strings of unequal "
-//               "length";
-//     hex hx = hexor(hx1, hx2);
-//     int len = hx.raw.length();
-//     int numOnes = 0;
-//     for (int i = 0; i < len; i++) {
-//         int val = std::stoi(hx.raw.substr(i, 1), 0, 16);
-//         while (val) {
-//             numOnes += val & 1;
-//             val >>= 1;
-//         }
-//     }
-//     return numOnes;
-// }
-//
-// int hammingDistance(std::string s1, std::string s2) {
-//     try {
-//         return hammingDistance(toHex(s1), toHex(s2));
-//     } catch (const char *msg) {
-//         std::cout << msg << std::endl;
-//         return -1;
-//     }
-// }
+int hammingDistance(ByteSeq bs1, ByteSeq bs2) {
+    if (bs1.length() != bs2.length())
+        throw "cannot compute hamming distance between strings of unequal "
+              "length";
+    return (bs1 ^ bs2).hammingWeight();
+}

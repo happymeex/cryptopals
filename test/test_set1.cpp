@@ -78,7 +78,7 @@ TEST_CASE("Set 1 challenge 5: repeating-key xor") {
     expected >> s_out;
     CHECK(repeating_key_xor(ByteSeq{input}, ByteSeq{key}).toHex().raw == s_out);
 }
-//
+
 // TEST_CASE("Set 1 challenge 6: break repeating-key xor") {
 //     std::ifstream in{"test/input/s1c6.txt"};
 //     std::ifstream expected{"test/expected/s1c6.txt"};
@@ -90,35 +90,36 @@ TEST_CASE("Set 1 challenge 5: repeating-key xor") {
 //     for (std::string input; getline(expected, input);) {
 //         s_out += input + "\n";
 //     }
-//     CHECK(break_repeating_xor(b64ToHex(s_in)).toString() == s_out);
+//     ByteSeq bs{b64{s_in}};
+//     CHECK(break_repeating_xor(bs).toString() == s_out);
 // }
 //
-// TEST_CASE("Set 1 challenge 7: AES-128 ECB mode") {
-//     std::ifstream in{"test/input/s1c7.txt"};
-//     std::ifstream expected{"test/expected/s1c7.txt"};
+//  TEST_CASE("Set 1 challenge 7: AES-128 ECB mode") {
+//      std::ifstream in{"test/input/s1c7.txt"};
+//      std::ifstream expected{"test/expected/s1c7.txt"};
 //
-//     std::string encrypted = "";
-//     for (std::string s; in >> s;) {
-//         encrypted += s;
-//     }
-//     std::string s_out;
-//     for (std::string input; getline(expected, input);) {
-//         s_out += input + "\n";
-//     }
-//     hex cipher = b64ToHex(encrypted);
-//     std::string ret = aes128_ecb_decrypt(cipher, "YELLOW
-//     SUBMARINE").toString(); CHECK(ret + "\n" == s_out);
-// }
+//      std::string encrypted = "";
+//      for (std::string s; in >> s;) {
+//          encrypted += s;
+//      }
+//      std::string s_out;
+//      for (std::string input; getline(expected, input);) {
+//          s_out += input + "\n";
+//      }
+//      hex cipher = b64ToHex(encrypted);
+//      std::string ret = aes128_ecb_decrypt(cipher, "YELLOW
+//      SUBMARINE").toString(); CHECK(ret + "\n" == s_out);
+//  }
 //
-// TEST_CASE("Set 1 challenge 8: detect AES ECB mode") {
-//     std::ifstream in{"test/input/s1c8.txt"};
-//     std::ifstream expected{"test/expected/s1c8.txt"};
-//     std::vector<hex> v;
-//     for (std::string s; in >> s;) {
-//         v.push_back(hex{s});
-//     }
-//     std::string s_out;
-//     expected >> s_out;
-//     std::vector<hex> out = detect_aes_ecb(v);
-//     CHECK(out.at(0).raw == s_out);
-// }
+//  TEST_CASE("Set 1 challenge 8: detect AES ECB mode") {
+//      std::ifstream in{"test/input/s1c8.txt"};
+//      std::ifstream expected{"test/expected/s1c8.txt"};
+//      std::vector<hex> v;
+//      for (std::string s; in >> s;) {
+//          v.push_back(hex{s});
+//      }
+//      std::string s_out;
+//      expected >> s_out;
+//      std::vector<hex> out = detect_aes_ecb(v);
+//      CHECK(out.at(0).raw == s_out);
+//  }

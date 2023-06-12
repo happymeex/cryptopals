@@ -32,7 +32,7 @@ ByteSeq repeating_key_xor(ByteSeq bs, ByteSeq key);
  * repeating key xor, returns a hex value that is likely to be the decrypted
  * text.
  */
-hex break_repeating_xor(const hex hx);
+ByteSeq break_repeating_xor(const ByteSeq bs);
 
 /**
  * Given a vector of hex values, returns the vector consisting of those
