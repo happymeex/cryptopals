@@ -1,17 +1,5 @@
 FLAGS = -std=c++20
 
-#build/set1.o: test/set1.cpp build/hex.o build/aes.o build/utils.o
-#	g++ $(FLAGS) $^ -o $@
-#
-#test: test/aes_t.cpp build/aes.o build/hex.o build/test.o
-#	g++ $(FLAGS) $^ -o build/test
-#
-#test_set1: test/test_set1.cpp build/hex.o build/set1.o
-#	g++ $(FLAGS) $^ -o build/test_set1
-#
-#build/test.o: test/test.cpp
-#	g++ $(FLAGS) -c $^ -o $@
-#
 build/hex.o: src/hex.cpp
 	g++ $(FLAGS) -c $^ -o $@
 	
